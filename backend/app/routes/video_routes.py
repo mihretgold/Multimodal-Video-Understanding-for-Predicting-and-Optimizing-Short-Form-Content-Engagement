@@ -1,3 +1,9 @@
+"""
+Video Routes Module
+===================
+Handles video upload, cutting, and serving endpoints.
+"""
+
 from flask import Blueprint, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 import os
@@ -7,35 +13,27 @@ import uuid
 import logging
 import traceback
 
+# Import canonical utility functions
+from ..utils.video_utils import allowed_file, get_video_info, validate_time_range
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
 # Create blueprint
 video_bp = Blueprint('video', __name__)
 
-# Configure upload folder
+# Configure folders (relative to app directory)
 UPLOAD_FOLDER = Path(__file__).parent.parent / 'uploads'
 CUTS_FOLDER = Path(__file__).parent.parent / 'cuts'
-ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov', 'mkv', 'webm'}
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def get_video_info(filepath):
-    try:
-        with VideoFileClip(filepath) as clip:
-            return {
-                'duration': clip.duration,
-                'fps': clip.fps,
-                'size': (clip.w, clip.h)
-            }
-    except Exception as e:
-        logger.error(f"Error getting video info: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise
 
 @video_bp.route('/upload', methods=['POST'])
 def upload_video():
+    """
+    Handle video file uploads via the /api/video/upload endpoint.
+    
+    This is a duplicate of the main /upload endpoint for API consistency.
+    """
     if 'video' not in request.files:
         return jsonify({'error': 'No video file provided'}), 400
     
@@ -49,11 +47,10 @@ def upload_video():
             filename = secure_filename(file.filename)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             
-            # Save file in chunks
             file.save(filepath)
-            
-            # Get video information
             video_info = get_video_info(filepath)
+            
+            logger.info(f"Uploaded video: {filename} (duration: {video_info['duration']:.2f}s)")
             
             return jsonify({
                 'message': 'Video uploaded successfully',
@@ -62,18 +59,27 @@ def upload_video():
                 'fps': video_info['fps'],
                 'size': video_info['size']
             }), 200
+            
         except Exception as e:
             logger.error(f"Error during upload: {str(e)}")
             logger.error(traceback.format_exc())
-            # Clean up the file if it exists
             if os.path.exists(filepath):
                 os.remove(filepath)
             return jsonify({'error': f'Error processing video: {str(e)}'}), 500
     
     return jsonify({'error': 'Invalid file type'}), 400
 
+
 @video_bp.route('/cut', methods=['POST'])
 def cut_video():
+    """
+    Cut a video segment from an uploaded video.
+    
+    Expects JSON body with:
+    - filename: Name of the uploaded video
+    - startTime: Start time in seconds
+    - endTime: End time in seconds
+    """
     try:
         data = request.json
         filename = data.get('filename')
@@ -93,17 +99,16 @@ def cut_video():
         output_path = os.path.join(CUTS_FOLDER, cut_filename)
         
         logger.info(f"Starting video cut: {input_path} -> {output_path}")
-        logger.info(f"Time range: {start_time} - {end_time}")
+        logger.info(f"Time range: {start_time:.2f}s - {end_time:.2f}s")
         
         with VideoFileClip(input_path) as video:
             # Validate time range
-            if start_time < 0 or end_time > video.duration or start_time >= end_time:
-                return jsonify({'error': 'Invalid time range'}), 400
+            is_valid, error_msg = validate_time_range(start_time, end_time, video.duration)
+            if not is_valid:
+                return jsonify({'error': error_msg}), 400
             
-            # Cut the video
             cut = video.subclipped(start_time, end_time)
             
-            # Use specific codec settings
             cut.write_videofile(
                 output_path,
                 codec='libx264',
@@ -114,7 +119,7 @@ def cut_video():
                 preset='ultrafast'
             )
             
-            logger.info(f"Video cut completed successfully: {cut_filename}")
+            logger.info(f"Video cut completed: {cut_filename}")
             
             return jsonify({
                 'message': 'Video cut successfully',
@@ -126,10 +131,14 @@ def cut_video():
         logger.error(traceback.format_exc())
         return jsonify({'error': f'Error cutting video: {str(e)}'}), 500
 
+
 @video_bp.route('/uploads/<filename>')
 def serve_video(filename):
+    """Serve uploaded video files."""
     return send_from_directory(UPLOAD_FOLDER, filename)
+
 
 @video_bp.route('/cuts/<filename>')
 def serve_cut(filename):
-    return send_from_directory(CUTS_FOLDER, filename) 
+    """Serve cut video files."""
+    return send_from_directory(CUTS_FOLDER, filename)

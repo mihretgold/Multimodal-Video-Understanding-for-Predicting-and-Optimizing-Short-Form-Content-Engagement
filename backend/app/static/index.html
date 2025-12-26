@@ -3,72 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Shorts - Video Upload</title>
+    <title>Movie Shorts - Multimodal Video Analysis</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-elevated: #222230;
+            --accent-primary: #00d4aa;
+            --accent-secondary: #7c3aed;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --accent-info: #3b82f6;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #2d2d3a;
+            --gradient-primary: linear-gradient(135deg, #00d4aa 0%, #7c3aed 100%);
+            --gradient-glow: linear-gradient(135deg, rgba(0, 212, 170, 0.2) 0%, rgba(124, 58, 237, 0.2) 100%);
+            --shadow-glow: 0 0 40px rgba(0, 212, 170, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         body {
-            background-color: #f5f5f5;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem;
+            line-height: 1.6;
         }
 
-        .container {
-            max-width: 800px;
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 40%),
+                linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            z-index: -1;
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 1.5rem;
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
             text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
         }
 
-        .upload-area {
-            border: 2px dashed #ccc;
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: var(--bg-elevated);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            margin-top: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Main Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            border-color: rgba(0, 212, 170, 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-glow);
             border-radius: 8px;
-            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 3rem 2rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
+            transition: var(--transition);
+            background: var(--bg-secondary);
         }
 
         .upload-area:hover {
-            border-color: #666;
-            background-color: #f8f8f8;
+            border-color: var(--accent-primary);
+            background: var(--gradient-glow);
         }
 
         .upload-area.dragover {
-            border-color: #4CAF50;
-            background-color: #E8F5E9;
+            border-color: var(--accent-primary);
+            background: var(--gradient-glow);
+            transform: scale(1.02);
         }
 
         .upload-icon {
             font-size: 3rem;
-            color: #666;
             margin-bottom: 1rem;
+            filter: grayscale(50%);
+        }
+
+        .upload-area:hover .upload-icon {
+            filter: grayscale(0);
         }
 
         .upload-text {
-            color: #666;
+            font-size: 1.1rem;
+            color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
 
         .upload-hint {
-            color: #999;
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
 
@@ -76,801 +218,1235 @@
             display: none;
         }
 
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
         .progress-bar {
             width: 100%;
-            height: 4px;
-            background-color: #eee;
-            border-radius: 2px;
-            margin-top: 1rem;
-            display: none;
+            height: 8px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            overflow: hidden;
         }
 
         .progress {
             width: 0%;
             height: 100%;
-            background-color: #4CAF50;
-            border-radius: 2px;
+            background: var(--gradient-primary);
+            border-radius: 4px;
             transition: width 0.3s ease;
         }
 
-        .upload-details {
+        .progress-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
             margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: #666;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .file-size {
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .status {
-            margin-top: 1rem;
-            text-align: center;
-            color: #666;
-        }
-
+        /* Video Player */
         .video-container {
-            margin-top: 2rem;
-            width: 100%;
-            max-width: 800px;
             display: none;
+        }
+
+        .video-container.active {
+            display: block;
         }
 
         .video-player {
             width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            background: #000;
         }
 
-        .video-title {
-            margin: 1rem 0;
-            color: #333;
-            font-size: 1.1rem;
-        }
-
-        .cut-controls {
+        .video-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
             margin-top: 1rem;
             padding: 1rem;
-            background: #f8f8f8;
+            background: var(--bg-elevated);
             border-radius: 8px;
         }
 
-        .time-inputs {
+        .video-info-item {
+            text-align: center;
+        }
+
+        .video-info-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .video-info-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-primary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            border-color: var(--accent-primary);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .btn-accent {
+            background: var(--accent-secondary);
+            color: white;
+        }
+
+        .btn-accent:hover:not(:disabled) {
+            background: #8b5cf6;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--accent-danger);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-group {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* Form Controls */
+        .form-group {
             margin-bottom: 1rem;
         }
 
-        .time-input {
-            flex: 1;
-        }
-
-        .time-input label {
+        .form-label {
             display: block;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
             margin-bottom: 0.5rem;
-            color: #666;
         }
 
-        .time-input input {
+        .form-input {
             width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-elevated);
             padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
         }
 
-        .cut-button {
-            background: #4CAF50;
-            color: white;
+        .tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: transparent;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: var(--transition);
         }
 
-        .cut-button:hover {
-            background: #45a049;
+        .tab.active {
+            background: var(--gradient-primary);
+            color: var(--bg-primary);
         }
 
-        .cut-button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
+        .tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
         }
 
-        .subtitle-button {
-            background: #2196F3;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
+        /* Segments List */
+        .segments-list {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .segments-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .segments-list::-webkit-scrollbar-track {
+            background: var(--bg-elevated);
+            border-radius: 3px;
+        }
+
+        .segments-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .segment-item {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .segment-item:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .segment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .segment-rank {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rank-badge {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--bg-primary);
+        }
+
+        .rank-badge.gold {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+
+        .rank-badge.silver {
+            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+        }
+
+        .rank-badge.bronze {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        }
+
+        .segment-type {
+            padding: 0.25rem 0.75rem;
+            background: rgba(124, 58, 237, 0.2);
+            border: 1px solid var(--accent-secondary);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--accent-secondary);
+            text-transform: capitalize;
+        }
+
+        .segment-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .segment-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .segment-confidence {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .segment-score {
+            margin: 0.75rem 0;
+        }
+
+        .score-bar {
+            height: 8px;
+            background: var(--bg-secondary);
             border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 1rem;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
         }
 
-        .subtitle-button:hover {
-            background: #1976D2;
+        .score-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
         }
 
-        .subtitle-button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
+        .score-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
         }
 
-        .subtitle-status {
-            margin-top: 0.5rem;
-            color: #666;
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .score-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+        }
+
+        .score-item-label {
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .score-item-value {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+        }
+
+        .modality-icon {
             font-size: 0.9rem;
         }
 
-        .cuts-container {
-            margin-top: 2rem;
+        .segment-preview {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-style: italic;
+            margin: 0.75rem 0;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-primary);
         }
 
-        .cuts-title {
-            color: #333;
-            margin-bottom: 1rem;
+        .segment-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .segment-actions .btn {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        /* Status Messages */
+        .status {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .status.active {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .status.success {
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--accent-danger);
+            color: var(--accent-danger);
+        }
+
+        .status.loading {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid var(--accent-secondary);
+            color: var(--accent-secondary);
+        }
+
+        .status-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Ablation Mode Selector */
+        .ablation-modes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .ablation-mode {
+            padding: 0.75rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .ablation-mode:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .ablation-mode.selected {
+            border-color: var(--accent-primary);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .ablation-mode-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .ablation-mode-desc {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .ablation-mode-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Results Panel */
+        .results-panel {
+            display: none;
+        }
+
+        .results-panel.active {
+            display: block;
+        }
+
+        .result-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-stat {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+        }
+
+        .summary-stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .summary-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Cuts Container */
+        .cuts-container {
+            display: none;
+        }
+
+        .cuts-container.active {
+            display: block;
         }
 
         .cut-item {
-            margin-bottom: 1rem;
+            background: var(--bg-elevated);
+            border-radius: 10px;
             padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.75rem;
         }
 
-        .subtitles-data-container {
-            margin-top: 2rem;
+        .cut-item video {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+
+        /* Data Display */
+        .data-display {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .subtitles-data-title {
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .subtitles-data-controls {
-            margin-bottom: 1rem;
-        }
-
-        .get-subtitles-button {
-            background: #2196F3;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .get-subtitles-button:hover {
-            background: #1976D2;
-        }
-
-        .get-subtitles-button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
-
-        .subtitles-data-content {
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
-            background: #f8f8f8;
-            border-radius: 4px;
-            padding: 1rem;
-        }
-
-        .subtitles-data-display {
-            font-family: monospace;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
             white-space: pre-wrap;
             word-break: break-word;
-            margin: 0;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            color: var(--text-secondary);
         }
 
-        .analyze-subtitles-button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-left: 0.5rem;
+        /* Ablation Results Card */
+        .ablation-comparison {
+            margin-top: 1rem;
         }
 
-        .analyze-subtitles-button:hover {
-            background: #45a049;
-        }
-
-        .analyze-subtitles-button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
-
-        .ai-analysis-container {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: white;
+        .ablation-result-item {
+            background: var(--bg-secondary);
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
-
-        .ai-analysis-title {
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .ai-analysis-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .ai-analysis-result {
-            background: #f8f8f8;
             padding: 1rem;
-            border-radius: 4px;
+            margin-bottom: 0.75rem;
         }
 
-        .ai-analysis-result h3 {
-            margin-top: 0;
-            color: #333;
-        }
-
-        .time-range {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .apply-ai-cut-button {
-            background: #9C27B0;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .apply-ai-cut-button:hover {
-            background: #7B1FA2;
-        }
-
-        .apply-ai-cut-button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
-
-        .ai-analysis-explanation {
-            background: #f8f8f8;
-            padding: 1rem;
-            border-radius: 4px;
-        }
-
-        .ai-analysis-explanation h3 {
-            margin-top: 0;
-            color: #333;
-        }
-
-        .ai-explanation-display {
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-break: break-word;
-            margin: 0;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            background: #fff;
-            padding: 0.5rem;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        /* New styles for multiple sections */
-        .ai-sections-container {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
-
-        .ai-sections-title {
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .ai-sections-list {
-            max-height: 400px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .ai-section-item {
-            background: #f8f8f8;
-            padding: 1rem;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        .ai-section-header {
+        .ablation-result-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
         }
 
-        .ai-section-type {
-            background: #9C27B0;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            text-transform: capitalize;
+        .ablation-result-mode {
+            font-weight: 500;
+            color: var(--text-primary);
         }
 
-        .ai-section-time {
-            color: #666;
-            font-size: 0.9rem;
+        .ablation-result-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
         }
 
-        .ai-section-apply {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 0.5rem;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 1rem;
+            }
+
+            .video-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .ablation-modes {
+                grid-template-columns: 1fr;
+            }
+
+            .result-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-group .btn {
+                width: 100%;
+            }
         }
 
-        .ai-section-apply:hover {
-            background: #45a049;
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .ai-section-apply:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
+        .animate-in {
+            animation: fadeIn 0.3s ease forwards;
         }
 
-        .ai-section-preview {
-            margin-top: 1rem;
-            display: none;
-        }
-
-        .ai-section-preview video {
-            width: 100%;
-            border-radius: 4px;
-            background: #000;
-        }
-
-        .ai-section-preview-title {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .ai-section-status {
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
+        /* Empty State */
+        .empty-state {
             text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
         }
 
-        .ai-section-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-            flex-wrap: wrap;
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
         }
 
-        .ai-section-download {
-            background: #2196F3;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            display: none;
-        }
-
-        .ai-section-download:hover {
-            background: #1976D2;
-        }
-
-        .ai-section-download:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
-
-        .share-buttons {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .share-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .share-button:hover {
-            transform: scale(1.1);
-        }
-
-        .share-twitter {
-            background: #1DA1F2;
-        }
-
-        .share-facebook {
-            background: #4267B2;
-        }
-
-        .share-instagram {
-            background: #E1306C;
-        }
-
-        .share-modal {
-            display: none;
+        /* Toast Notifications */
+        .toast-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            bottom: 2rem;
+            right: 2rem;
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
         }
 
-        .share-modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .share-modal-title {
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        .share-modal-input {
-            width: 100%;
-            padding: 0.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .share-modal-buttons {
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-top: 0.75rem;
             display: flex;
-            justify-content: flex-end;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast.success { border-left: 4px solid var(--accent-primary); }
+        .toast.error { border-left: 4px solid var(--accent-danger); }
+        .toast.info { border-left: 4px solid var(--accent-secondary); }
+
+        /* Feature details popover */
+        .features-toggle {
+            font-size: 0.75rem;
+            color: var(--accent-info);
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .features-toggle:hover {
+            text-decoration: underline;
+        }
+
+        .features-details {
+            display: none;
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .features-details.active {
+            display: block;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.5rem;
         }
 
-        .share-modal-button {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s ease;
+        .feature-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .share-modal-cancel {
-            background: #f5f5f5;
-            color: #333;
+        .feature-name {
+            color: var(--text-muted);
         }
 
-        .share-modal-share {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .share-modal-cancel:hover {
-            background: #e0e0e0;
-        }
-
-        .share-modal-share:hover {
-            background: #45a049;
+        .feature-value {
+            color: var(--accent-primary);
+            font-family: 'JetBrains Mono', monospace;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Movie Shorts</h1>
-        <div class="upload-area" id="dropZone">
-            <div class="upload-icon">📁</div>
-            <div class="upload-text">Drag and drop your video here</div>
-            <div class="upload-hint">or click to select a file</div>
-            <input type="file" id="fileInput" accept="video/*">
-        </div>
-        <div class="progress-bar">
-            <div class="progress"></div>
-        </div>
-        <div class="status"></div>
-        <div class="video-container" id="videoContainer">
-            <div class="video-title" id="videoTitle"></div>
-            <video class="video-player" id="videoPlayer" controls>
-                Your browser does not support the video tag.
-            </video>
-            <div class="cut-controls" id="cutControls">
-                <div class="time-inputs">
-                    <div class="time-input">
-                        <label for="startTime">Start Time (seconds)</label>
-                        <input type="number" id="startTime" min="0" step="0.1" value="0">
-                    </div>
-                    <div class="time-input">
-                        <label for="endTime">End Time (seconds)</label>
-                        <input type="number" id="endTime" min="0" step="0.1" value="0">
-                    </div>
-                </div>
-                <button class="cut-button" id="cutButton">Cut Video</button>
-                <button class="subtitle-button" id="subtitleButton">Get Subtitles</button>
-                <div class="subtitle-status" id="subtitleStatus"></div>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🎬</div>
+                <span class="logo-text">Movie Shorts</span>
             </div>
-        </div>
-        <div class="cuts-container" id="cutsContainer">
-            <h2 class="cuts-title">Cut Videos</h2>
-            <div id="cutsList"></div>
-        </div>
+            <p class="tagline">Multimodal Video Understanding for Short-Form Content</p>
+            <span class="version-badge">Research Pipeline v2.0</span>
+        </header>
 
-        <!-- New section for displaying subtitles data -->
-        <div class="subtitles-data-container" id="subtitlesDataContainer">
-            <h2 class="subtitles-data-title">Subtitles Data</h2>
-            <div class="subtitles-data-controls">
-                <button class="get-subtitles-button" id="getSubtitlesButton">Get Subtitles Data</button>
-                <button class="analyze-subtitles-button" id="analyzeSubtitlesButton" disabled>Analyze with AI</button>
-            </div>
-            <div class="subtitles-data-content">
-                <pre id="subtitlesDataDisplay" class="subtitles-data-display"></pre>
-            </div>
-        </div>
-
-        <!-- New section for displaying AI analysis results -->
-        <div class="ai-analysis-container" id="aiAnalysisContainer">
-            <h2 class="ai-analysis-title">AI Analysis Results</h2>
-            <div class="ai-analysis-content">
-                <div class="ai-analysis-result">
-                    <h3>Recommended Clip</h3>
-                    <div class="time-range">
-                        <div class="time-input">
-                            <label for="aiStartTime">Start Time (seconds)</label>
-                            <input type="number" id="aiStartTime" min="0" step="0.1" value="0" readonly>
+        <!-- Main Content -->
+        <div class="main-grid">
+            <!-- Left Column - Video & Upload -->
+            <div class="main-content">
+                <!-- Upload Card -->
+                <div class="card" id="uploadCard">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-title-icon">📤</span>
+                            Upload Video
+                        </h2>
+                    </div>
+                    <div class="upload-area" id="dropZone">
+                        <div class="upload-icon">🎥</div>
+                        <div class="upload-text">Drag and drop your video here</div>
+                        <div class="upload-hint">or click to select a file (MP4, AVI, MOV, MKV)</div>
+                        <input type="file" id="fileInput" accept="video/*">
+                    </div>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress" id="uploadProgress"></div>
                         </div>
-                        <div class="time-input">
-                            <label for="aiEndTime">End Time (seconds)</label>
-                            <input type="number" id="aiEndTime" min="0" step="0.1" value="0" readonly>
+                        <div class="progress-text" id="progressText">Uploading...</div>
+                    </div>
+                </div>
+
+                <!-- Video Player Card -->
+                <div class="card video-container" id="videoContainer">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-title-icon">🎬</span>
+                            <span id="videoTitle">Video Preview</span>
+                        </h2>
+                    </div>
+                    <video class="video-player" id="videoPlayer" controls>
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-info" id="videoInfo">
+                        <div class="video-info-item">
+                            <div class="video-info-label">Duration</div>
+                            <div class="video-info-value" id="infoDuration">--:--</div>
+                        </div>
+                        <div class="video-info-item">
+                            <div class="video-info-label">Resolution</div>
+                            <div class="video-info-value" id="infoResolution">--</div>
+                        </div>
+                        <div class="video-info-item">
+                            <div class="video-info-label">FPS</div>
+                            <div class="video-info-value" id="infoFps">--</div>
+                        </div>
+                        <div class="video-info-item">
+                            <div class="video-info-label">File Size</div>
+                            <div class="video-info-value" id="infoSize">--</div>
                         </div>
                     </div>
-                    <button class="apply-ai-cut-button" id="applyAiCutButton" disabled>Apply AI Cut</button>
                 </div>
-                <div class="ai-analysis-explanation">
-                    <h3>AI Explanation</h3>
-                    <pre id="aiExplanationDisplay" class="ai-explanation-display"></pre>
+
+                <!-- Manual Cut Card -->
+                <div class="card video-container" id="cutCard">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-title-icon">✂️</span>
+                            Manual Cut
+                        </h2>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Start Time (seconds)</label>
+                            <input type="number" class="form-input" id="startTime" min="0" step="0.1" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Time (seconds)</label>
+                            <input type="number" class="form-input" id="endTime" min="0" step="0.1" value="0">
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="cutButton">
+                        ✂️ Cut Video
+                    </button>
+                </div>
+
+                <!-- Cut Videos List -->
+                <div class="card cuts-container" id="cutsContainer">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-title-icon">📹</span>
+                            Cut Videos
+                        </h2>
+                    </div>
+                    <div id="cutsList"></div>
                 </div>
             </div>
-        </div>
 
-        <!-- New section for displaying multiple AI sections -->
-        <div class="ai-sections-container" id="aiSectionsContainer">
-            <h2 class="ai-sections-title">AI Recommended Sections</h2>
-            <div class="ai-sections-list" id="aiSectionsList">
-                <!-- Sections will be dynamically added here -->
-            </div>
-        </div>
+            <!-- Right Column - Analysis Panel -->
+            <div class="analysis-panel">
+                <!-- Analysis Mode Tabs -->
+                <div class="card" id="analysisCard" style="display: none;">
+                    <div class="tabs">
+                        <button class="tab active" data-tab="pipeline">Research Pipeline</button>
+                        <button class="tab" data-tab="legacy">Legacy AI</button>
+                    </div>
 
-        <!-- Add share modal -->
-        <div class="share-modal" id="shareModal">
-            <div class="share-modal-content">
-                <h3 class="share-modal-title">Share Video</h3>
-                <input type="text" class="share-modal-input" id="shareUrl" readonly>
-                <div class="share-modal-buttons">
-                    <button class="share-modal-button share-modal-cancel" onclick="closeShareModal()">Cancel</button>
-                    <button class="share-modal-button share-modal-share" onclick="copyShareUrl()">Copy Link</button>
+                    <!-- Pipeline Analysis Tab -->
+                    <div class="tab-content" id="pipelineTab">
+                        <div class="form-group">
+                            <label class="form-label">Ablation Mode</label>
+                            <div class="ablation-modes" id="ablationModes">
+                                <div class="ablation-mode selected" data-mode="full_multimodal">
+                                    <div class="ablation-mode-icon">🎯</div>
+                                    <div class="ablation-mode-name">Full Multimodal</div>
+                                    <div class="ablation-mode-desc">Text + Audio + Visual</div>
+                                </div>
+                                <div class="ablation-mode" data-mode="text_only">
+                                    <div class="ablation-mode-icon">📝</div>
+                                    <div class="ablation-mode-name">Text Only</div>
+                                    <div class="ablation-mode-desc">Subtitles only</div>
+                                </div>
+                                <div class="ablation-mode" data-mode="audio_only">
+                                    <div class="ablation-mode-icon">🔊</div>
+                                    <div class="ablation-mode-name">Audio Only</div>
+                                    <div class="ablation-mode-desc">Sound features</div>
+                                </div>
+                                <div class="ablation-mode" data-mode="visual_only">
+                                    <div class="ablation-mode-icon">👁️</div>
+                                    <div class="ablation-mode-name">Visual Only</div>
+                                    <div class="ablation-mode-desc">Video frames</div>
+                                </div>
+                                <div class="ablation-mode" data-mode="text_audio">
+                                    <div class="ablation-mode-icon">🎙️</div>
+                                    <div class="ablation-mode-name">Text + Audio</div>
+                                    <div class="ablation-mode-desc">No visual features</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="runPipelineBtn">
+                                🚀 Run Analysis
+                            </button>
+                            <button class="btn btn-accent" id="runAblationBtn">
+                                🔬 Ablation Study
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Legacy AI Tab -->
+                    <div class="tab-content" id="legacyTab" style="display: none;">
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                            Use the original Gemini-based analysis without multimodal feature extraction.
+                        </p>
+                        <div class="btn-group">
+                            <button class="btn btn-secondary" id="getSubtitlesBtn">
+                                📝 Get Subtitles
+                            </button>
+                            <button class="btn btn-primary" id="analyzeSubtitlesBtn" disabled>
+                                🤖 Analyze with AI
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="status" id="analysisStatus">
+                        <div class="status-spinner"></div>
+                        <span id="statusText">Processing...</span>
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="card results-panel" id="resultsPanel">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-title-icon">📊</span>
+                            Analysis Results
+                        </h2>
+                        <span id="resultId" style="font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;"></span>
+                    </div>
+                    <div class="result-summary" id="resultSummary">
+                        <div class="summary-stat">
+                            <div class="summary-stat-value" id="segmentCount">0</div>
+                            <div class="summary-stat-label">Segments Found</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="summary-stat-value" id="processingTime">0s</div>
+                            <div class="summary-stat-label">Processing Time</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="summary-stat-value" id="analysisMode">--</div>
+                            <div class="summary-stat-label">Mode</div>
+                        </div>
+                    </div>
+                    <div class="segments-list" id="segmentsList">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔍</div>
+                            <p>No segments analyzed yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subtitles Data Panel -->
+                <div class="card" id="subtitlesPanel" style="display: none;">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-title-icon">📝</span>
+                            Subtitles Data
+                        </h2>
+                    </div>
+                    <div class="data-display" id="subtitlesDisplay">
+                        No subtitles loaded
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const progressBar = document.querySelector('.progress-bar');
-        const progress = document.querySelector('.progress');
-        const status = document.querySelector('.status');
-        const videoContainer = document.getElementById('videoContainer');
-        const videoPlayer = document.getElementById('videoPlayer');
-        const videoTitle = document.getElementById('videoTitle');
-        const cutControls = document.getElementById('cutControls');
-        const startTimeInput = document.getElementById('startTime');
-        const endTimeInput = document.getElementById('endTime');
-        const cutButton = document.getElementById('cutButton');
-        const cutsList = document.getElementById('cutsList');
-        const subtitleButton = document.getElementById('subtitleButton');
-        const subtitleStatus = document.getElementById('subtitleStatus');
-        const getSubtitlesButton = document.getElementById('getSubtitlesButton');
-        const subtitlesDataDisplay = document.getElementById('subtitlesDataDisplay');
-        const subtitlesDataContainer = document.getElementById('subtitlesDataContainer');
-        const analyzeSubtitlesButton = document.getElementById('analyzeSubtitlesButton');
-        const aiAnalysisContainer = document.getElementById('aiAnalysisContainer');
-        const aiStartTime = document.getElementById('aiStartTime');
-        const aiEndTime = document.getElementById('aiEndTime');
-        const applyAiCutButton = document.getElementById('applyAiCutButton');
-        const aiExplanationDisplay = document.getElementById('aiExplanationDisplay');
-        const aiSectionsContainer = document.getElementById('aiSectionsContainer');
-        const aiSectionsList = document.getElementById('aiSectionsList');
+        // ====================
+        // State Management
+        // ====================
+        const state = {
+            currentFilename: '',
+            currentDuration: 0,
+            currentSubtitles: null,
+            currentResult: null,
+            selectedAblationMode: 'full_multimodal'
+        };
 
-        let currentVideoDuration = 0;
-        let currentFilename = '';
-        let currentSubtitlesData = null;
+        // ====================
+        // API Endpoints
+        // ====================
+        const API = {
+            // Video endpoints
+            upload: '/upload',  // Legacy endpoint (backward compatible)
+            cut: '/cut',        // Legacy endpoint (backward compatible)
+            
+            // Pipeline endpoints (new API)
+            pipelineRun: '/api/pipeline/run',
+            pipelineAblation: '/api/pipeline/ablation',
+            pipelineResult: (id) => `/api/pipeline/result/${id}`,
+            pipelineResults: '/api/pipeline/results',
+            pipelineStages: '/api/pipeline/stages',
+            
+            // Subtitle endpoints
+            checkSubtitles: (filename) => `/api/subtitles/check/${filename}`,
+            getSubtitles: (filename) => `/api/subtitles/get/${filename}`,
+            extractSubtitles: (filename) => `/api/subtitles/extract/${filename}`,
+            
+            // Analysis endpoints (legacy)
+            analyzeSubtitles: '/api/analysis/analyze-subtitles',
+            
+            // File serving
+            uploads: (filename) => `/uploads/${filename}`,
+            cuts: (filename) => `/cuts/${filename}`
+        };
 
-        // Handle click to upload
-        dropZone.addEventListener('click', () => {
-            fileInput.click();
-        });
+        // ====================
+        // DOM Elements
+        // ====================
+        const elements = {
+            dropZone: document.getElementById('dropZone'),
+            fileInput: document.getElementById('fileInput'),
+            progressContainer: document.getElementById('progressContainer'),
+            uploadProgress: document.getElementById('uploadProgress'),
+            progressText: document.getElementById('progressText'),
+            videoContainer: document.getElementById('videoContainer'),
+            videoPlayer: document.getElementById('videoPlayer'),
+            videoTitle: document.getElementById('videoTitle'),
+            cutCard: document.getElementById('cutCard'),
+            startTime: document.getElementById('startTime'),
+            endTime: document.getElementById('endTime'),
+            cutButton: document.getElementById('cutButton'),
+            cutsContainer: document.getElementById('cutsContainer'),
+            cutsList: document.getElementById('cutsList'),
+            analysisCard: document.getElementById('analysisCard'),
+            analysisStatus: document.getElementById('analysisStatus'),
+            statusText: document.getElementById('statusText'),
+            resultsPanel: document.getElementById('resultsPanel'),
+            segmentsList: document.getElementById('segmentsList'),
+            subtitlesPanel: document.getElementById('subtitlesPanel'),
+            subtitlesDisplay: document.getElementById('subtitlesDisplay'),
+            runPipelineBtn: document.getElementById('runPipelineBtn'),
+            runAblationBtn: document.getElementById('runAblationBtn'),
+            getSubtitlesBtn: document.getElementById('getSubtitlesBtn'),
+            analyzeSubtitlesBtn: document.getElementById('analyzeSubtitlesBtn'),
+            toastContainer: document.getElementById('toastContainer'),
+            resultId: document.getElementById('resultId')
+        };
 
-        // Handle file selection
-        fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
-        });
-
-        // Handle drag and drop
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
-        });
-
-        function handleFiles(files) {
-            if (files.length > 0) {
-                const file = files[0];
-                if (file.type.startsWith('video/')) {
-                    uploadFile(file);
-                } else {
-                    status.textContent = 'Please upload a video file';
-                }
-            }
-        }
-
+        // ====================
+        // Utility Functions
+        // ====================
         function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
+            if (bytes === 0) return '0 B';
             const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const sizes = ['B', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        function uploadFile(file) {
-            progressBar.style.display = 'block';
-            status.textContent = 'Uploading...';
-            videoContainer.style.display = 'none';
-            cutsList.innerHTML = '';
-            subtitleStatus.textContent = '';
-            subtitleButton.disabled = true;
+        function formatDuration(seconds) {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            if (hrs > 0) {
+                return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
 
-            // Show file size
-            const fileSize = document.createElement('div');
-            fileSize.className = 'file-size';
-            fileSize.textContent = `File size: ${formatFileSize(file.size)}`;
-            dropZone.appendChild(fileSize);
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatScore(score) {
+            if (typeof score !== 'number') return '0.00';
+            return score.toFixed(2);
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                <span>${message}</span>
+            `;
+            elements.toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        function showStatus(message, type = 'loading') {
+            elements.analysisStatus.className = `status active ${type}`;
+            elements.statusText.textContent = message;
+        }
+
+        function hideStatus() {
+            elements.analysisStatus.className = 'status';
+        }
+
+        function getRankBadgeClass(rank) {
+            if (rank === 1) return 'gold';
+            if (rank === 2) return 'silver';
+            if (rank === 3) return 'bronze';
+            return '';
+        }
+
+        function getModalityIcon(modality) {
+            switch (modality) {
+                case 'text': return '📝';
+                case 'audio': return '🔊';
+                case 'visual': return '👁️';
+                default: return '📊';
+            }
+        }
+
+        function truncateText(text, maxLength = 150) {
+            if (!text) return '';
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+
+        // ====================
+        // Upload Handling
+        // ====================
+        elements.dropZone.addEventListener('click', () => elements.fileInput.click());
+
+        elements.dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            elements.dropZone.classList.add('dragover');
+        });
+
+        elements.dropZone.addEventListener('dragleave', () => {
+            elements.dropZone.classList.remove('dragover');
+        });
+
+        elements.dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            elements.dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('video/')) {
+                uploadFile(files[0]);
+            }
+        });
+
+        elements.fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                uploadFile(e.target.files[0]);
+            }
+        });
+
+        async function uploadFile(file) {
+            elements.progressContainer.classList.add('active');
+            elements.uploadProgress.style.width = '0%';
+            elements.progressText.textContent = 'Starting upload...';
 
             const formData = new FormData();
             formData.append('video', file);
 
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/upload', true);
+            xhr.open('POST', API.upload, true);
 
             xhr.upload.onprogress = (e) => {
                 if (e.lengthComputable) {
-                    const percentComplete = (e.loaded / e.total) * 100;
-                    document.querySelector('.progress').style.width = percentComplete + '%';
-                    
-                    // Update status with upload details
-                    const uploaded = formatFileSize(e.loaded);
-                    const total = formatFileSize(e.total);
-                    status.textContent = `Uploading: ${uploaded} of ${total} (${Math.round(percentComplete)}%)`;
+                    const percent = (e.loaded / e.total) * 100;
+                    elements.uploadProgress.style.width = percent + '%';
+                    elements.progressText.textContent = 
+                        `Uploading: ${formatFileSize(e.loaded)} / ${formatFileSize(e.total)} (${Math.round(percent)}%)`;
                 }
             };
 
             xhr.onload = function() {
+                elements.progressContainer.classList.remove('active');
+                
                 if (xhr.status === 200) {
                     const response = JSON.parse(xhr.responseText);
-                    status.textContent = response.message;
-                    
-                    // Display the uploaded video
-                    currentFilename = response.filename;
-                    currentVideoDuration = response.duration;
-                    videoTitle.textContent = response.filename;
-                    videoPlayer.src = `/uploads/${response.filename}`;
-                    videoContainer.style.display = 'block';
-                    
-                    // Set max value for end time input
-                    endTimeInput.max = currentVideoDuration;
-                    endTimeInput.value = currentVideoDuration;
-
-                    // Check for subtitles
-                    checkSubtitles(currentFilename);
-                    
-                    // Show subtitles data container
-                    showSubtitlesDataContainer();
+                    handleUploadSuccess(response, file.size);
                 } else {
-                    const response = JSON.parse(xhr.responseText);
-                    status.textContent = 'Error: ' + response.error;
-                }
-                // Remove file size display
-                const fileSizeElement = document.querySelector('.file-size');
-                if (fileSizeElement) {
-                    fileSizeElement.remove();
+                    try {
+                        const error = JSON.parse(xhr.responseText);
+                        showToast(error.error || 'Upload failed', 'error');
+                    } catch {
+                        showToast('Upload failed', 'error');
+                    }
                 }
             };
 
             xhr.onerror = function() {
-                status.textContent = 'Upload failed. Please try again.';
-                // Remove file size display
-                const fileSizeElement = document.querySelector('.file-size');
-                if (fileSizeElement) {
-                    fileSizeElement.remove();
-                }
+                elements.progressContainer.classList.remove('active');
+                showToast('Upload failed - network error', 'error');
             };
 
             xhr.send(formData);
         }
 
-        // Handle video cutting
-        cutButton.addEventListener('click', async () => {
-            const startTime = parseFloat(startTimeInput.value);
-            const endTime = parseFloat(endTimeInput.value);
+        function handleUploadSuccess(response, fileSize) {
+            state.currentFilename = response.filename;
+            state.currentDuration = response.duration;
 
-            if (startTime >= endTime || startTime < 0 || endTime > currentVideoDuration) {
-                status.textContent = 'Invalid time range';
+            // Update video player
+            elements.videoTitle.textContent = response.filename;
+            elements.videoPlayer.src = API.uploads(response.filename);
+            elements.videoContainer.classList.add('active');
+            elements.cutCard.classList.add('active');
+            elements.analysisCard.style.display = 'block';
+
+            // Update video info
+            document.getElementById('infoDuration').textContent = formatDuration(response.duration);
+            document.getElementById('infoResolution').textContent = response.size ? 
+                `${response.size[0]}x${response.size[1]}` : '--';
+            document.getElementById('infoFps').textContent = response.fps ? 
+                response.fps.toFixed(1) : '--';
+            document.getElementById('infoSize').textContent = formatFileSize(fileSize);
+
+            // Set end time
+            elements.endTime.value = response.duration;
+            elements.endTime.max = response.duration;
+
+            showToast('Video uploaded successfully', 'success');
+        }
+
+        // ====================
+        // Manual Cutting
+        // ====================
+        elements.cutButton.addEventListener('click', async () => {
+            const startTime = parseFloat(elements.startTime.value);
+            const endTime = parseFloat(elements.endTime.value);
+
+            if (startTime >= endTime || startTime < 0 || endTime > state.currentDuration) {
+                showToast('Invalid time range', 'error');
                 return;
             }
 
-            cutButton.disabled = true;
-            status.textContent = 'Cutting video...';
+            elements.cutButton.disabled = true;
+            showStatus('Cutting video...', 'loading');
 
             try {
-                const response = await fetch('/cut', {
+                const response = await fetch(API.cut, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        filename: currentFilename,
+                        filename: state.currentFilename,
                         startTime: startTime,
                         endTime: endTime
                     })
@@ -879,243 +1455,544 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    status.textContent = data.message;
-                    addCutVideo(data.cut_filename);
+                    addCutVideo(data.cut_filename, startTime, endTime);
+                    showToast('Video cut successfully', 'success');
                 } else {
-                    status.textContent = 'Error: ' + data.error;
+                    showToast(data.error || 'Cut failed', 'error');
                 }
             } catch (error) {
-                status.textContent = 'Error cutting video';
+                showToast('Error cutting video', 'error');
             } finally {
-                cutButton.disabled = false;
+                elements.cutButton.disabled = false;
+                hideStatus();
             }
         });
 
-        function addCutVideo(filename) {
+        function addCutVideo(filename, start, end) {
+            elements.cutsContainer.classList.add('active');
+            
             const cutItem = document.createElement('div');
-            cutItem.className = 'cut-item';
+            cutItem.className = 'cut-item animate-in';
             cutItem.innerHTML = `
-                <div class="video-title">${filename}</div>
-                <video class="video-player" controls>
-                    <source src="/cuts/${filename}" type="video/mp4">
-                    Your browser does not support the video tag.
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 500;">${filename}</span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem;">
+                        ${formatTime(start)} - ${formatTime(end)}
+                    </span>
+                </div>
+                <video controls>
+                    <source src="${API.cuts(filename)}" type="video/mp4">
                 </video>
+                <div style="margin-top: 0.75rem;">
+                    <a href="${API.cuts(filename)}" download class="btn btn-secondary" style="width: 100%;">
+                        ⬇️ Download
+                    </a>
+                </div>
             `;
-            cutsList.insertBefore(cutItem, cutsList.firstChild);
+            elements.cutsList.insertBefore(cutItem, elements.cutsList.firstChild);
         }
 
-        // Update end time max when start time changes
-        startTimeInput.addEventListener('change', () => {
-            const startTime = parseFloat(startTimeInput.value);
-            if (startTime >= currentVideoDuration) {
-                startTimeInput.value = 0;
-            }
-            endTimeInput.min = startTime;
+        // ====================
+        // Tab Switching
+        // ====================
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const tabName = tab.dataset.tab;
+                document.getElementById('pipelineTab').style.display = tabName === 'pipeline' ? 'block' : 'none';
+                document.getElementById('legacyTab').style.display = tabName === 'legacy' ? 'block' : 'none';
+            });
         });
 
-        // Update start time max when end time changes
-        endTimeInput.addEventListener('change', () => {
-            const endTime = parseFloat(endTimeInput.value);
-            if (endTime > currentVideoDuration) {
-                endTimeInput.value = currentVideoDuration;
-            }
-            startTimeInput.max = endTime;
+        // ====================
+        // Ablation Mode Selection
+        // ====================
+        document.querySelectorAll('.ablation-mode').forEach(mode => {
+            mode.addEventListener('click', () => {
+                document.querySelectorAll('.ablation-mode').forEach(m => m.classList.remove('selected'));
+                mode.classList.add('selected');
+                state.selectedAblationMode = mode.dataset.mode;
+            });
         });
 
-        // Handle subtitle extraction
-        subtitleButton.addEventListener('click', async () => {
-            try {
-                subtitleButton.disabled = true;
-                subtitleStatus.textContent = 'Processing... This may take a few minutes for AI transcription.';
-                
-                const response = await fetch(`/extract-subtitles/${currentFilename}`);
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${currentFilename.split('.')[0]}.srt`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                    subtitleStatus.textContent = 'Subtitles downloaded successfully!';
-                } else {
-                    const data = await response.json();
-                    subtitleStatus.textContent = 'Error: ' + data.error;
-                }
-            } catch (error) {
-                subtitleStatus.textContent = 'Error extracting subtitles';
-            } finally {
-                subtitleButton.disabled = false;
-            }
-        });
-
-        async function checkSubtitles(filename) {
-            try {
-                const response = await fetch(`/check-subtitles/${filename}`);
-                const data = await response.json();
-                
-                if (data.has_subtitles) {
-                    subtitleButton.disabled = false;
-                    subtitleStatus.textContent = 'Subtitles available';
-                } else {
-                    subtitleButton.disabled = false;
-                    subtitleStatus.textContent = 'No embedded subtitles found. Click to generate subtitles using AI.';
-                }
-            } catch (error) {
-                subtitleButton.disabled = true;
-                subtitleStatus.textContent = 'Error checking for subtitles';
-            }
-        }
-
-        // Initially hide the subtitles data container
-        subtitlesDataContainer.style.display = 'none';
-
-        // Show subtitles data container when a video is uploaded
-        function showSubtitlesDataContainer() {
-            subtitlesDataContainer.style.display = 'block';
-            getSubtitlesButton.disabled = false;
-            analyzeSubtitlesButton.disabled = true;
-            aiAnalysisContainer.style.display = 'none';
-        }
-
-        // Add event listener for the get subtitles button
-        getSubtitlesButton.addEventListener('click', async () => {
-            if (!currentFilename) {
-                subtitlesDataDisplay.textContent = 'No video selected';
+        // ====================
+        // Pipeline Analysis
+        // ====================
+        elements.runPipelineBtn.addEventListener('click', async () => {
+            if (!state.currentFilename) {
+                showToast('Please upload a video first', 'error');
                 return;
             }
 
-            try {
-                getSubtitlesButton.disabled = true;
-                subtitlesDataDisplay.textContent = 'Loading subtitles data...';
-                
-                const response = await fetch(`/get-subtitles/${currentFilename}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    currentSubtitlesData = data;
-                    subtitlesDataDisplay.textContent = JSON.stringify(data, null, 2);
-                    analyzeSubtitlesButton.disabled = false;
-                } else {
-                    const errorData = await response.json();
-                    subtitlesDataDisplay.textContent = `Error: ${errorData.error}`;
-                }
-            } catch (error) {
-                subtitlesDataDisplay.textContent = `Error: ${error.message}`;
-            } finally {
-                getSubtitlesButton.disabled = false;
-            }
-        });
-
-        // Update the analyze subtitles button event listener
-        analyzeSubtitlesButton.addEventListener('click', async () => {
-            if (!currentSubtitlesData || !currentSubtitlesData.subtitles) {
-                aiExplanationDisplay.textContent = 'No subtitles data available';
-                return;
-            }
+            elements.runPipelineBtn.disabled = true;
+            showStatus(`Running ${state.selectedAblationMode.replace('_', ' ')} analysis...`, 'loading');
 
             try {
-                analyzeSubtitlesButton.disabled = true;
-                aiExplanationDisplay.textContent = 'Analyzing subtitles with AI...';
-                aiAnalysisContainer.style.display = 'block';
-                aiSectionsContainer.style.display = 'none';
-                
-                const response = await fetch('/api/analysis/analyze-subtitles', {
+                const response = await fetch(API.pipelineRun, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        subtitles: currentSubtitlesData.subtitles
+                        filename: state.currentFilename,
+                        ablation_mode: state.selectedAblationMode,
+                        use_cache: true,
+                        save_results: true
                     })
                 });
-                
-                if (response.ok) {
-                    const data = await response.json();
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    state.currentResult = data;
+                    displayPipelineResults(data);
+                    showStatus('Analysis complete!', 'success');
+                    setTimeout(hideStatus, 2000);
+                    showToast(`Found ${data.segment_count} engaging segments`, 'success');
+                } else {
+                    showStatus(data.error || 'Analysis failed', 'error');
+                    showToast(data.error || 'Analysis failed', 'error');
+                }
+            } catch (error) {
+                console.error('Pipeline error:', error);
+                showStatus('Error running pipeline', 'error');
+                showToast('Error running pipeline', 'error');
+            } finally {
+                elements.runPipelineBtn.disabled = false;
+            }
+        });
+
+        // ====================
+        // Ablation Study
+        // ====================
+        elements.runAblationBtn.addEventListener('click', async () => {
+            if (!state.currentFilename) {
+                showToast('Please upload a video first', 'error');
+                return;
+            }
+
+            elements.runAblationBtn.disabled = true;
+            showStatus('Running ablation study (this may take a while)...', 'loading');
+
+            try {
+                const response = await fetch(API.pipelineAblation, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        filename: state.currentFilename
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    displayAblationResults(data);
+                    showStatus('Ablation study complete!', 'success');
+                    setTimeout(hideStatus, 2000);
+                    showToast('Ablation study completed', 'success');
+                } else {
+                    showStatus(data.error || 'Ablation study failed', 'error');
+                    showToast(data.error || 'Ablation study failed', 'error');
+                }
+            } catch (error) {
+                console.error('Ablation error:', error);
+                showStatus('Error running ablation study', 'error');
+                showToast('Error running ablation study', 'error');
+            } finally {
+                elements.runAblationBtn.disabled = false;
+            }
+        });
+
+        function displayPipelineResults(data) {
+            elements.resultsPanel.classList.add('active');
+
+            // Update result ID
+            if (data.result_id) {
+                elements.resultId.textContent = `ID: ${data.result_id.substring(0, 8)}...`;
+            }
+
+            // Update summary
+            document.getElementById('segmentCount').textContent = data.segment_count || 0;
+            document.getElementById('processingTime').textContent = 
+                (data.processing_time_seconds || 0).toFixed(1) + 's';
+            
+            // Format ablation mode nicely
+            const modeDisplay = (data.ablation_mode || 'full')
+                .replace('_', ' ')
+                .replace(/\b\w/g, l => l.toUpperCase());
+            document.getElementById('analysisMode').textContent = modeDisplay;
+
+            // Display segments
+            if (data.segments && data.segments.length > 0) {
+                elements.segmentsList.innerHTML = data.segments.map((segment, index) => {
+                    const rank = segment.rank || index + 1;
+                    const rankClass = getRankBadgeClass(rank);
+                    const score = segment.score || {};
+                    const features = segment.features || {};
+                    const segmentId = segment.segment_id || `seg_${index}`;
                     
-                    // Clear previous sections
-                    aiSectionsList.innerHTML = '';
-                    
-                    // Display each section
-                    data.sections.forEach((section, index) => {
-                        const sectionElement = document.createElement('div');
-                        sectionElement.className = 'ai-section-item';
-                        sectionElement.innerHTML = `
-                            <div class="ai-section-header">
-                                <span class="ai-section-type">${section.type}</span>
-                                <span class="ai-section-time">${section.start}s - ${section.end}s</span>
+                    return `
+                    <div class="segment-item animate-in" style="animation-delay: ${index * 0.05}s">
+                        <div class="segment-header">
+                            <div class="segment-rank">
+                                <span class="rank-badge ${rankClass}">${rank}</span>
+                                <span class="segment-type">${segment.segment_type || 'unknown'}</span>
                             </div>
-                            <button class="ai-section-apply" onclick="applySectionCut(this, ${section.start}, ${section.end})">
-                                Apply This Cut
-                            </button>
-                            <div class="ai-section-status"></div>
-                            <div class="ai-section-preview">
-                                <div class="ai-section-preview-title">Preview:</div>
-                                <video controls>
-                                    <source src="/uploads/${currentFilename}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                                <div class="ai-section-actions">
-                                    <button class="ai-section-download" onclick="downloadCutVideo(this)">
-                                        Download Cut Video
-                                    </button>
-                                    <div class="share-buttons">
-                                        <button class="share-button share-twitter" onclick="shareVideo(this, 'twitter')" title="Share on Twitter">
-                                            𝕏
-                                        </button>
-                                        <button class="share-button share-facebook" onclick="shareVideo(this, 'facebook')" title="Share on Facebook">
-                                            f
-                                        </button>
-                                        <button class="share-button share-instagram" onclick="shareVideo(this, 'instagram')" title="Share on Instagram">
-                                            📸
-                                        </button>
+                            <div class="segment-meta">
+                                <span class="segment-time">${formatTime(segment.start_seconds)} - ${formatTime(segment.end_seconds)}</span>
+                                ${segment.confidence ? `<span class="segment-confidence">${(segment.confidence * 100).toFixed(0)}%</span>` : ''}
+                            </div>
+                        </div>
+                        
+                        ${score.total_score !== undefined ? `
+                            <div class="segment-score">
+                                <div class="score-value">Engagement Score: ${formatScore(score.total_score)}</div>
+                                <div class="score-bar">
+                                    <div class="score-fill" style="width: ${Math.min(100, (score.total_score || 0) * 100)}%"></div>
+                                </div>
+                                <div class="score-breakdown">
+                                    <div class="score-item">
+                                        <div class="score-item-label">
+                                            <span class="modality-icon">📝</span> Text
+                                        </div>
+                                        <div class="score-item-value">${formatScore(score.text_score)}</div>
+                                    </div>
+                                    <div class="score-item">
+                                        <div class="score-item-label">
+                                            <span class="modality-icon">🔊</span> Audio
+                                        </div>
+                                        <div class="score-item-value">${formatScore(score.audio_score)}</div>
+                                    </div>
+                                    <div class="score-item">
+                                        <div class="score-item-label">
+                                            <span class="modality-icon">👁️</span> Visual
+                                        </div>
+                                        <div class="score-item-value">${formatScore(score.visual_score)}</div>
                                     </div>
                                 </div>
                             </div>
+                        ` : ''}
+                        
+                        ${segment.text_preview ? `
+                            <div class="segment-preview">"${truncateText(segment.text_preview)}"</div>
+                        ` : ''}
+                        
+                        ${features.text_features || features.audio_features || features.visual_features ? `
+                            <div class="features-toggle" onclick="toggleFeatures('${segmentId}')">
+                                📊 View detailed features ▼
+                            </div>
+                            <div class="features-details" id="features-${segmentId}">
+                                ${renderFeatureDetails(features)}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="segment-actions">
+                            <button class="btn btn-secondary" onclick="previewSegment(${segment.start_seconds}, ${segment.end_seconds})">
+                                👁️ Preview
+                            </button>
+                            <button class="btn btn-primary" onclick="cutSegment(${segment.start_seconds}, ${segment.end_seconds})">
+                                ✂️ Cut
+                            </button>
+                        </div>
+                    </div>
+                `}).join('');
+            } else {
+                elements.segmentsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <p>No segments found</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderFeatureDetails(features) {
+            let html = '<div class="feature-grid">';
+            
+            if (features.text_features) {
+                const tf = features.text_features;
+                html += `
+                    <div class="feature-item">
+                        <span class="feature-name">Word Count</span>
+                        <span class="feature-value">${tf.word_count || 0}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-name">Sentiment</span>
+                        <span class="feature-value">${formatScore(tf.sentiment_score)}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-name">Questions</span>
+                        <span class="feature-value">${tf.question_count || 0}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-name">Exclamations</span>
+                        <span class="feature-value">${tf.exclamation_count || 0}</span>
+                    </div>
+                `;
+            }
+            
+            if (features.audio_features) {
+                const af = features.audio_features;
+                html += `
+                    <div class="feature-item">
+                        <span class="feature-name">Energy Mean</span>
+                        <span class="feature-value">${formatScore(af.energy_mean)}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-name">Silence Ratio</span>
+                        <span class="feature-value">${formatScore(af.silence_ratio)}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-name">Volume Dynamics</span>
+                        <span class="feature-value">${formatScore(af.volume_dynamics)}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-name">Speech Rate</span>
+                        <span class="feature-value">${formatScore(af.speech_rate)}</span>
+                    </div>
+                `;
+            }
+            
+            if (features.visual_features) {
+                const vf = features.visual_features;
+                html += `
+                    <div class="feature-item">
+                        <span class="feature-name">Motion Intensity</span>
+                        <span class="feature-value">${formatScore(vf.motion_intensity)}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-name">Scene Changes</span>
+                        <span class="feature-value">${vf.scene_change_count || 0}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-name">Brightness</span>
+                        <span class="feature-value">${formatScore(vf.brightness_mean)}</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-name">Color Variance</span>
+                        <span class="feature-value">${formatScore(vf.color_variance)}</span>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        window.toggleFeatures = function(segmentId) {
+            const details = document.getElementById(`features-${segmentId}`);
+            if (details) {
+                details.classList.toggle('active');
+            }
+        };
+
+        function displayAblationResults(data) {
+            elements.resultsPanel.classList.add('active');
+
+            const results = data.results || {};
+            const modes = Object.keys(results);
+            
+            document.getElementById('segmentCount').textContent = modes.length + ' modes';
+            document.getElementById('processingTime').textContent = 'Ablation';
+            document.getElementById('analysisMode').textContent = 'Comparison';
+            elements.resultId.textContent = '';
+
+            elements.segmentsList.innerHTML = `
+                <div style="margin-bottom: 1rem; color: var(--text-secondary);">
+                    Comparing different modality combinations:
+                </div>
+                <div class="ablation-comparison">
+                    ${modes.map(mode => {
+                        const result = results[mode];
+                        const modeDisplay = mode.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        
+                        if (result.error) {
+                            return `
+                                <div class="ablation-result-item">
+                                    <div class="ablation-result-header">
+                                        <span class="ablation-result-mode">${getModalityIcon(mode.split('_')[0])} ${modeDisplay}</span>
+                                        <span style="color: var(--accent-danger);">Failed</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        const topSeg = result.top_segment;
+                        return `
+                            <div class="ablation-result-item">
+                                <div class="ablation-result-header">
+                                    <span class="ablation-result-mode">${getModeIcon(mode)} ${modeDisplay}</span>
+                                    <div class="ablation-result-stats">
+                                        <span>${result.segment_count} segments</span>
+                                        <span>${(result.processing_time_seconds || 0).toFixed(1)}s</span>
+                                    </div>
+                                </div>
+                                ${topSeg ? `
+                                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                                        Top: ${formatTime(topSeg.start_seconds)} - ${formatTime(topSeg.end_seconds)}
+                                        ${topSeg.score ? ` (Score: ${formatScore(topSeg.score.total_score)})` : ''}
+                                    </div>
+                                ` : ''}
+                            </div>
                         `;
-                        aiSectionsList.appendChild(sectionElement);
-                    });
-                    
-                    // Show the sections container
-                    aiSectionsContainer.style.display = 'block';
-                    
-                    // Display the explanation
-                    aiExplanationDisplay.textContent = `AI has analyzed the video and found ${data.sections.length} engaging sections.`;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function getModeIcon(mode) {
+            const icons = {
+                'full_multimodal': '🎯',
+                'text_only': '📝',
+                'audio_only': '🔊',
+                'visual_only': '👁️',
+                'text_audio': '🎙️'
+            };
+            return icons[mode] || '📊';
+        }
+
+        // ====================
+        // Legacy AI Analysis
+        // ====================
+        elements.getSubtitlesBtn.addEventListener('click', async () => {
+            if (!state.currentFilename) {
+                showToast('Please upload a video first', 'error');
+                return;
+            }
+
+            elements.getSubtitlesBtn.disabled = true;
+            showStatus('Extracting subtitles...', 'loading');
+
+            try {
+                const response = await fetch(API.getSubtitles(state.currentFilename));
+                const data = await response.json();
+
+                if (response.ok) {
+                    state.currentSubtitles = data;
+                    elements.subtitlesPanel.style.display = 'block';
+                    elements.subtitlesDisplay.textContent = JSON.stringify(data, null, 2);
+                    elements.analyzeSubtitlesBtn.disabled = false;
+                    showStatus('Subtitles extracted', 'success');
+                    setTimeout(hideStatus, 2000);
+                    showToast('Subtitles extracted successfully', 'success');
                 } else {
-                    const errorData = await response.json();
-                    aiExplanationDisplay.textContent = `Error: ${errorData.error}`;
+                    showStatus(data.error || 'Failed to extract subtitles', 'error');
+                    showToast(data.error || 'Failed to extract subtitles', 'error');
                 }
             } catch (error) {
-                aiExplanationDisplay.textContent = `Error: ${error.message}`;
+                console.error('Subtitles error:', error);
+                showStatus('Error extracting subtitles', 'error');
+                showToast('Error extracting subtitles', 'error');
             } finally {
-                analyzeSubtitlesButton.disabled = false;
+                elements.getSubtitlesBtn.disabled = false;
             }
         });
 
-        // Function to apply a section cut
-        async function applySectionCut(button, start, end) {
-            const sectionItem = button.closest('.ai-section-item');
-            const statusElement = sectionItem.querySelector('.ai-section-status');
-            const previewElement = sectionItem.querySelector('.ai-section-preview');
-            const videoElement = previewElement.querySelector('video');
-            const downloadButton = previewElement.querySelector('.ai-section-download');
-            const shareButtons = previewElement.querySelector('.share-buttons');
-            
-            // Show loading status
-            statusElement.textContent = 'Processing cut...';
-            button.disabled = true;
-            downloadButton.style.display = 'none';
-            shareButtons.style.display = 'none';
-            
+        elements.analyzeSubtitlesBtn.addEventListener('click', async () => {
+            if (!state.currentSubtitles || !state.currentSubtitles.subtitles) {
+                showToast('Please get subtitles first', 'error');
+                return;
+            }
+
+            elements.analyzeSubtitlesBtn.disabled = true;
+            showStatus('Analyzing with AI...', 'loading');
+
             try {
-                const response = await fetch('/cut', {
+                const response = await fetch(API.analyzeSubtitles, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        filename: currentFilename,
+                        subtitles: state.currentSubtitles.subtitles
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayLegacyResults(data);
+                    showStatus('Analysis complete!', 'success');
+                    setTimeout(hideStatus, 2000);
+                    showToast(`Found ${data.sections?.length || 0} sections`, 'success');
+                } else {
+                    showStatus(data.error || 'Analysis failed', 'error');
+                    showToast(data.error || 'Analysis failed', 'error');
+                }
+            } catch (error) {
+                console.error('Analysis error:', error);
+                showStatus('Error analyzing subtitles', 'error');
+                showToast('Error analyzing subtitles', 'error');
+            } finally {
+                elements.analyzeSubtitlesBtn.disabled = false;
+            }
+        });
+
+        function displayLegacyResults(data) {
+            elements.resultsPanel.classList.add('active');
+
+            document.getElementById('segmentCount').textContent = data.sections?.length || 0;
+            document.getElementById('processingTime').textContent = 'N/A';
+            document.getElementById('analysisMode').textContent = 'Legacy AI';
+            elements.resultId.textContent = '';
+
+            if (data.sections && data.sections.length > 0) {
+                elements.segmentsList.innerHTML = data.sections.map((section, index) => `
+                    <div class="segment-item animate-in" style="animation-delay: ${index * 0.05}s">
+                        <div class="segment-header">
+                            <div class="segment-rank">
+                                <span class="rank-badge">${index + 1}</span>
+                                <span class="segment-type">${section.type || 'unknown'}</span>
+                            </div>
+                            <span class="segment-time">${formatTime(section.start)} - ${formatTime(section.end)}</span>
+                        </div>
+                        <div class="segment-actions">
+                            <button class="btn btn-secondary" onclick="previewSegment(${section.start}, ${section.end})">
+                                👁️ Preview
+                            </button>
+                            <button class="btn btn-primary" onclick="cutSegment(${section.start}, ${section.end})">
+                                ✂️ Cut
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                elements.segmentsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <p>No sections found</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ====================
+        // Segment Actions
+        // ====================
+        window.previewSegment = function(start, end) {
+            elements.videoPlayer.currentTime = start;
+            elements.videoPlayer.play();
+
+            // Stop at end time
+            const stopHandler = () => {
+                if (elements.videoPlayer.currentTime >= end) {
+                    elements.videoPlayer.pause();
+                    elements.videoPlayer.removeEventListener('timeupdate', stopHandler);
+                }
+            };
+            elements.videoPlayer.addEventListener('timeupdate', stopHandler);
+
+            // Scroll to video
+            elements.videoContainer.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        window.cutSegment = async function(start, end) {
+            showStatus('Cutting segment...', 'loading');
+
+            try {
+                const response = await fetch(API.cut, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        filename: state.currentFilename,
                         startTime: start,
                         endTime: end
                     })
@@ -1124,94 +2001,25 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Update video source to the cut version
-                    videoElement.src = `/cuts/${data.cut_filename}`;
-                    previewElement.style.display = 'block';
-                    statusElement.textContent = 'Cut completed successfully!';
-                    // Store the cut filename for download and sharing
-                    downloadButton.dataset.cutFilename = data.cut_filename;
-                    downloadButton.style.display = 'block';
-                    shareButtons.style.display = 'flex';
-                    // Store the cut filename in all share buttons
-                    shareButtons.querySelectorAll('.share-button').forEach(btn => {
-                        btn.dataset.cutFilename = data.cutFilename;
-                    });
+                    addCutVideo(data.cut_filename, start, end);
+                    showStatus('Segment cut successfully!', 'success');
+                    setTimeout(hideStatus, 2000);
+                    showToast('Segment cut successfully', 'success');
                 } else {
-                    statusElement.textContent = `Error: ${data.error}`;
+                    showStatus(data.error || 'Cut failed', 'error');
+                    showToast(data.error || 'Cut failed', 'error');
                 }
             } catch (error) {
-                statusElement.textContent = `Error: ${error.message}`;
-            } finally {
-                button.disabled = false;
+                showStatus('Error cutting segment', 'error');
+                showToast('Error cutting segment', 'error');
             }
-        }
+        };
 
-        // Add the download function
-        async function downloadCutVideo(button) {
-            const cutFilename = button.dataset.cutFilename;
-            if (!cutFilename) return;
-
-            try {
-                button.disabled = true;
-                const response = await fetch(`/cuts/${cutFilename}`);
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = cutFilename;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (error) {
-                console.error('Error downloading video:', error);
-            } finally {
-                button.disabled = false;
-            }
-        }
-
-        // Add share functionality
-        function shareVideo(button, platform) {
-            const cutFilename = button.dataset.cutFilename;
-            if (!cutFilename) return;
-
-            const shareUrl = `${window.location.origin}/cuts/${cutFilename}`;
-            const shareModal = document.getElementById('shareModal');
-            const shareUrlInput = document.getElementById('shareUrl');
-            
-            shareUrlInput.value = shareUrl;
-            shareModal.style.display = 'flex';
-
-            // Store the platform for when user clicks share
-            shareModal.dataset.platform = platform;
-        }
-
-        function closeShareModal() {
-            const shareModal = document.getElementById('shareModal');
-            shareModal.style.display = 'none';
-        }
-
-        function copyShareUrl() {
-            const shareUrlInput = document.getElementById('shareUrl');
-            shareUrlInput.select();
-            document.execCommand('copy');
-            
-            // Show feedback
-            const shareButton = shareModal.querySelector('.share-modal-share');
-            const originalText = shareButton.textContent;
-            shareButton.textContent = 'Copied!';
-            setTimeout(() => {
-                shareButton.textContent = originalText;
-            }, 2000);
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const shareModal = document.getElementById('shareModal');
-            if (event.target === shareModal) {
-                closeShareModal();
-            }
-        }
+        // ====================
+        // Initialization
+        // ====================
+        console.log('Movie Shorts v2.0 - Multimodal Video Analysis loaded');
+        console.log('API Endpoints:', API);
     </script>
 </body>
-</html> 
+</html>
