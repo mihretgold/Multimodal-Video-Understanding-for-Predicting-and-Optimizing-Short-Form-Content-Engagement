@@ -1,0 +1,31 @@
+{"timestamp": "2025-12-26T15:26:11.625880", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.625880", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.625880", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'fixed_window'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.625880", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'semantic_boundary'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.626989", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'hybrid'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.626989", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.626989", "level": "INFO", "logger": "research.segmentation", "message": "Starting segmentation", "taskName": null, "strategy": "pause_based", "video_duration": 300.0, "subtitle_count": 65, "result_id": null}
+{"timestamp": "2025-12-26T15:26:11.627880", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.627880", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.627880", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'fixed_window'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.628886", "level": "INFO", "logger": "research.segmentation", "message": "Starting segmentation", "taskName": null, "strategy": "fixed_window", "video_duration": 120.0, "subtitle_count": 26, "result_id": null}
+{"timestamp": "2025-12-26T15:26:11.628886", "level": "WARNING", "logger": "research.segmentation", "message": "Too few segments: 1 < 3", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.628886", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.628886", "level": "INFO", "logger": "research.segmentation", "message": "Starting segmentation", "taskName": null, "strategy": "pause_based", "video_duration": 300.0, "subtitle_count": 65, "result_id": null}
+{"timestamp": "2025-12-26T15:26:11.629890", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.629890", "level": "INFO", "logger": "research.segmentation", "message": "Starting segmentation", "taskName": null, "strategy": "pause_based", "video_duration": 180.0, "subtitle_count": 39, "result_id": null}
+{"timestamp": "2025-12-26T15:26:11.629890", "level": "WARNING", "logger": "research.segmentation", "message": "Too few segments: 2 < 3", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.630879", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.630879", "level": "INFO", "logger": "research.segmentation", "message": "Starting segmentation", "taskName": null, "strategy": "pause_based", "video_duration": 60.0, "subtitle_count": 0, "result_id": null}
+{"timestamp": "2025-12-26T15:26:11.630879", "level": "WARNING", "logger": "research.segmentation", "message": "Too few segments: 1 < 3", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.630879", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.630879", "level": "INFO", "logger": "research.segmentation", "message": "Starting segmentation", "taskName": null, "strategy": "pause_based", "video_duration": 30.0, "subtitle_count": 1, "result_id": null}
+{"timestamp": "2025-12-26T15:26:11.630879", "level": "WARNING", "logger": "research.segmentation", "message": "Segment 0bd975be6820 too short (30.0s < 60.0s)", "taskName": null}
+{"timestamp": "2025-12-26T15:26:11.630879", "level": "WARNING", "logger": "research.segmentation", "message": "Too few segments: 0 < 3", "taskName": null}
+{"timestamp": "2025-12-26T15:27:22.808872", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T15:27:22.808872", "level": "INFO", "logger": "research.segmentation", "message": "Starting segmentation", "taskName": null, "strategy": "pause_based", "video_duration": 180.0, "subtitle_count": 39, "result_id": null}
+{"timestamp": "2025-12-26T15:27:22.809769", "level": "WARNING", "logger": "research.segmentation", "message": "Too few segments: 2 < 3", "taskName": null}
+{"timestamp": "2025-12-26T16:12:54.989303", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T16:12:54.989303", "level": "INFO", "logger": "research.segmentation", "message": "Starting segmentation", "taskName": null, "strategy": "pause_based", "video_duration": 350.18, "subtitle_count": 31, "result_id": "de313b549040e20f"}
+{"timestamp": "2025-12-26T16:20:59.853256", "level": "INFO", "logger": "research.segmentation", "message": "Initialized TemporalSegmenter with strategy 'pause_based'", "taskName": null}
+{"timestamp": "2025-12-26T16:20:59.853256", "level": "INFO", "logger": "research.segmentation", "message": "Starting segmentation", "taskName": null, "strategy": "pause_based", "video_duration": 350.18, "subtitle_count": 31, "result_id": "0810a41c9fe27d52"}

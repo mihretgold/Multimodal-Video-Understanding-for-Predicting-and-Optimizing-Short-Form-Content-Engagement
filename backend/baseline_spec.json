@@ -1,0 +1,60 @@
+{
+  "baseline_name": "multimodal_video_baseline_v1",
+  "baseline_version": "1.0.0",
+  "input_spec": {
+    "allowed_extensions": [
+      "mp4",
+      "avi",
+      "mov",
+      "mkv",
+      "webm"
+    ],
+    "min_duration_seconds": 60.0,
+    "max_duration_seconds": 7200.0,
+    "max_file_size_bytes": 2147483648
+  },
+  "intermediate_spec": {
+    "video_metadata_required_fields": [
+      "filename",
+      "filepath",
+      "duration_seconds",
+      "fps",
+      "width",
+      "height"
+    ],
+    "subtitle_data_required_fields": [
+      "video_filename",
+      "entries",
+      "source",
+      "language"
+    ],
+    "segment_required_fields": [
+      "segment_id",
+      "start_seconds",
+      "end_seconds",
+      "segment_type"
+    ],
+    "min_segments": 1,
+    "max_segments": 20
+  },
+  "output_spec": {
+    "required_fields": [
+      "result_id",
+      "video_metadata",
+      "segments",
+      "processing_time_seconds",
+      "ablation_mode",
+      "created_at",
+      "version"
+    ],
+    "schema_version": "1.0.0"
+  },
+  "defaults": {
+    "whisper_model": "small",
+    "gemini_model": "gemini-1.5-flash",
+    "segment_duration_range": [
+      60.0,
+      70.0
+    ]
+  }
+}

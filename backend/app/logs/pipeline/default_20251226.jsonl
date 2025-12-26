@@ -1,0 +1,4 @@
+{"timestamp": "2025-12-26T15:13:02.286425", "level": "INFO", "logger": "research.pipeline", "message": "Starting stage: test_stage", "taskName": null, "result_id": "test_result_002"}
+{"timestamp": "2025-12-26T15:13:02.287426", "level": "INFO", "logger": "research.pipeline", "message": "Completed stage: test_stage (5.50s)", "taskName": null, "result_id": "test_result_002"}
+{"timestamp": "2025-12-26T15:51:41.613635", "level": "INFO", "logger": "research.pipeline", "message": "Starting stage: test_stage", "taskName": null, "result_id": "test_result_002"}
+{"timestamp": "2025-12-26T15:51:41.613635", "level": "INFO", "logger": "research.pipeline", "message": "Completed stage: test_stage (5.50s)", "taskName": null, "result_id": "test_result_002"}

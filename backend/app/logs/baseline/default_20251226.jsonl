@@ -1,0 +1,5 @@
+{"timestamp": "2025-12-26T15:18:01.133266", "level": "INFO", "logger": "research.baseline", "message": "Starting baseline run", "taskName": null, "video_path": "/nonexistent/video.mp4", "experiment": "default", "ablation_mode": "full_multimodal", "baseline_version": "1.0.0"}
+{"timestamp": "2025-12-26T15:18:01.134229", "level": "ERROR", "logger": "research.baseline", "message": "Input validation failed: Video file not found: /nonexistent/video.mp4", "taskName": null}
+{"timestamp": "2025-12-26T15:19:42.209179", "level": "INFO", "logger": "research.baseline", "message": "Exported baseline specification to baseline_spec.json", "taskName": null}
+{"timestamp": "2025-12-26T15:51:41.535648", "level": "INFO", "logger": "research.baseline", "message": "Starting baseline run", "taskName": null, "video_path": "/nonexistent/video.mp4", "experiment": "default", "ablation_mode": "full_multimodal", "baseline_version": "1.0.0"}
+{"timestamp": "2025-12-26T15:51:41.537637", "level": "ERROR", "logger": "research.baseline", "message": "Input validation failed: Video file not found: /nonexistent/video.mp4", "taskName": null}

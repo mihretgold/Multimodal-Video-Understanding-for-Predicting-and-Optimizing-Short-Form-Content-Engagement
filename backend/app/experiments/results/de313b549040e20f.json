@@ -1,0 +1,687 @@
+{
+  "result_id": "de313b549040e20f",
+  "video_metadata": {
+    "filename": "Student_Accomplice___Official_Film_of_the_Year_Winner___Rookie_Awards_2024.mp4",
+    "filepath": "C:\\Users\\bageg\\OneDrive\\Desktop\\Everthing\\Research Projects\\Movie-Shorts\\backend\\app\\uploads\\Student_Accomplice___Official_Film_of_the_Year_Winner___Rookie_Awards_2024.mp4",
+    "duration_seconds": 350.18,
+    "fps": 24.0,
+    "width": 1280,
+    "height": 720,
+    "file_size_bytes": 33410555,
+    "codec": "unknown",
+    "has_audio": true,
+    "has_subtitles": false,
+    "file_hash": null,
+    "created_at": "2025-12-26T16:09:19.235139"
+  },
+  "subtitle_data": {
+    "video_filename": "Student_Accomplice___Official_Film_of_the_Year_Winner___Rookie_Awards_2024.mp4",
+    "entries": [
+      {
+        "index": 0,
+        "start_seconds": 0.0,
+        "end_seconds": 5.0200000000000005,
+        "text": "...",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 1,
+        "start_seconds": 5.0200000000000005,
+        "end_seconds": 10.02,
+        "text": "...",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 2,
+        "start_seconds": 10.02,
+        "end_seconds": 15.02,
+        "text": "...",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 3,
+        "start_seconds": 15.02,
+        "end_seconds": 20.02,
+        "text": "...",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 4,
+        "start_seconds": 20.02,
+        "end_seconds": 25.0,
+        "text": "...",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 5,
+        "start_seconds": 25.0,
+        "end_seconds": 27.0,
+        "text": "Uh-uh.",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 6,
+        "start_seconds": 49.0,
+        "end_seconds": 50.0,
+        "text": "Ah!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 7,
+        "start_seconds": 53.0,
+        "end_seconds": 54.0,
+        "text": "Get out!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 8,
+        "start_seconds": 54.0,
+        "end_seconds": 55.0,
+        "text": "Hey! There he is!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 9,
+        "start_seconds": 55.0,
+        "end_seconds": 56.0,
+        "text": "No, wait! Run!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 10,
+        "start_seconds": 64.0,
+        "end_seconds": 65.0,
+        "text": "Hey, watch it!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 11,
+        "start_seconds": 84.0,
+        "end_seconds": 85.0,
+        "text": "Huh?",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 12,
+        "start_seconds": 94.0,
+        "end_seconds": 95.0,
+        "text": "Shouldn't we try to...",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 13,
+        "start_seconds": 95.0,
+        "end_seconds": 96.0,
+        "text": "Hands in pen and tool!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 14,
+        "start_seconds": 115.0,
+        "end_seconds": 116.0,
+        "text": "Uh-uh.",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 15,
+        "start_seconds": 124.0,
+        "end_seconds": 125.0,
+        "text": "Oh!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 16,
+        "start_seconds": 144.0,
+        "end_seconds": 146.0,
+        "text": "Hmm.",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 17,
+        "start_seconds": 174.0,
+        "end_seconds": 175.0,
+        "text": "Whoa!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 18,
+        "start_seconds": 201.0,
+        "end_seconds": 202.0,
+        "text": "Come on!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 19,
+        "start_seconds": 205.0,
+        "end_seconds": 206.0,
+        "text": "Aah!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 20,
+        "start_seconds": 214.0,
+        "end_seconds": 215.0,
+        "text": "Aah!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 21,
+        "start_seconds": 221.0,
+        "end_seconds": 222.0,
+        "text": "Aah!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 22,
+        "start_seconds": 226.0,
+        "end_seconds": 227.0,
+        "text": "Huh?",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 23,
+        "start_seconds": 227.0,
+        "end_seconds": 228.0,
+        "text": "Huh?",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 24,
+        "start_seconds": 228.0,
+        "end_seconds": 229.0,
+        "text": "Huh?",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 25,
+        "start_seconds": 229.0,
+        "end_seconds": 230.0,
+        "text": "Huh?",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 26,
+        "start_seconds": 230.0,
+        "end_seconds": 231.0,
+        "text": "Huh?",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 27,
+        "start_seconds": 231.0,
+        "end_seconds": 232.0,
+        "text": "Aah!",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 28,
+        "start_seconds": 262.0,
+        "end_seconds": 264.0,
+        "text": "Oh",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 29,
+        "start_seconds": 292.0,
+        "end_seconds": 294.0,
+        "text": "You",
+        "confidence": null,
+        "language": null
+      },
+      {
+        "index": 30,
+        "start_seconds": 322.0,
+        "end_seconds": 324.0,
+        "text": "You",
+        "confidence": null,
+        "language": null
+      }
+    ],
+    "source": "whisper",
+    "language": "en",
+    "total_duration_seconds": 324.0,
+    "word_count": 47,
+    "extracted_at": "2025-12-26T16:12:54.977305"
+  },
+  "segments": [
+    {
+      "segment_id": "01ae5a40f976",
+      "start_seconds": 190.0,
+      "end_seconds": 255.0,
+      "segment_type": "informative",
+      "confidence": 0.0,
+      "features": {
+        "segment_id": "01ae5a40f976",
+        "start_seconds": 190.0,
+        "end_seconds": 255.0,
+        "text_features": {
+          "embedding": null,
+          "word_count": 11,
+          "sentence_count": 10,
+          "avg_word_length": 3.0,
+          "sentiment_score": 0.0,
+          "keyword_density": 0.0,
+          "question_count": 5,
+          "exclamation_count": 5
+        },
+        "audio_features": {
+          "energy_mean": 0.5,
+          "energy_std": 0.1,
+          "pitch_mean": 0.0,
+          "pitch_std": 0.0,
+          "silence_ratio": 0.2,
+          "speech_rate": 0.0,
+          "volume_dynamics": 1.0,
+          "spectral_centroid": 0.0
+        },
+        "visual_features": {
+          "motion_intensity": 0.3,
+          "scene_change_count": 0,
+          "scene_change_rate": 0.0,
+          "brightness_mean": 0.5,
+          "brightness_std": 0.1,
+          "color_variance": 0.1,
+          "face_presence_ratio": 0.0,
+          "text_overlay_ratio": 0.0
+        },
+        "computed_at": "2025-12-26T16:12:55.025303",
+        "ablation_mode": "full_multimodal"
+      },
+      "score": {
+        "total_score": 0.2583,
+        "text_score": 0.30824999999999997,
+        "audio_score": 0.175,
+        "visual_score": 0.275,
+        "text_weight": 0.4,
+        "audio_weight": 0.3,
+        "visual_weight": 0.3,
+        "scoring_method": "rule_based"
+      },
+      "rank": 1,
+      "text_preview": "Come on! Aah! Aah! Aah! Huh? Huh? Huh? Huh? Huh? Aah!",
+      "source": "strategy:pause_based"
+    },
+    {
+      "segment_id": "161075935300",
+      "start_seconds": 0.0,
+      "end_seconds": 65.0,
+      "segment_type": "action",
+      "confidence": 0.0,
+      "features": {
+        "segment_id": "161075935300",
+        "start_seconds": 0.0,
+        "end_seconds": 65.0,
+        "text_features": {
+          "embedding": null,
+          "word_count": 15,
+          "sentence_count": 8,
+          "avg_word_length": 2.8666666666666667,
+          "sentiment_score": 0.0,
+          "keyword_density": 0.06666666666666667,
+          "question_count": 0,
+          "exclamation_count": 7
+        },
+        "audio_features": {
+          "energy_mean": 0.5,
+          "energy_std": 0.1,
+          "pitch_mean": 0.0,
+          "pitch_std": 0.0,
+          "silence_ratio": 0.2,
+          "speech_rate": 0.0,
+          "volume_dynamics": 1.0,
+          "spectral_centroid": 0.0
+        },
+        "visual_features": {
+          "motion_intensity": 0.3,
+          "scene_change_count": 0,
+          "scene_change_rate": 0.0,
+          "brightness_mean": 0.5,
+          "brightness_std": 0.1,
+          "color_variance": 0.1,
+          "face_presence_ratio": 0.0,
+          "text_overlay_ratio": 0.0
+        },
+        "computed_at": "2025-12-26T16:12:55.000302",
+        "ablation_mode": "full_multimodal"
+      },
+      "score": {
+        "total_score": 0.2217222222222222,
+        "text_score": 0.21680555555555556,
+        "audio_score": 0.175,
+        "visual_score": 0.275,
+        "text_weight": 0.4,
+        "audio_weight": 0.3,
+        "visual_weight": 0.3,
+        "scoring_method": "rule_based"
+      },
+      "rank": 2,
+      "text_preview": "... ... ... ... ... Uh-uh. Ah! Get out! Hey! There he is! No, wait! Run! Hey, watch it!",
+      "source": "strategy:pause_based"
+    },
+    {
+      "segment_id": "b37c39895438",
+      "start_seconds": 65.0,
+      "end_seconds": 125.0,
+      "segment_type": "highlight",
+      "confidence": 0.0,
+      "features": {
+        "segment_id": "b37c39895438",
+        "start_seconds": 65.0,
+        "end_seconds": 125.0,
+        "text_features": {
+          "embedding": null,
+          "word_count": 14,
+          "sentence_count": 5,
+          "avg_word_length": 2.9285714285714284,
+          "sentiment_score": 0.0,
+          "keyword_density": 0.0,
+          "question_count": 1,
+          "exclamation_count": 2
+        },
+        "audio_features": {
+          "energy_mean": 0.5,
+          "energy_std": 0.1,
+          "pitch_mean": 0.0,
+          "pitch_std": 0.0,
+          "silence_ratio": 0.2,
+          "speech_rate": 0.0,
+          "volume_dynamics": 1.0,
+          "spectral_centroid": 0.0
+        },
+        "visual_features": {
+          "motion_intensity": 0.3,
+          "scene_change_count": 0,
+          "scene_change_rate": 0.0,
+          "brightness_mean": 0.5,
+          "brightness_std": 0.1,
+          "color_variance": 0.1,
+          "face_presence_ratio": 0.0,
+          "text_overlay_ratio": 0.0
+        },
+        "computed_at": "2025-12-26T16:12:55.010304",
+        "ablation_mode": "full_multimodal"
+      },
+      "score": {
+        "total_score": 0.1992,
+        "text_score": 0.1605,
+        "audio_score": 0.175,
+        "visual_score": 0.275,
+        "text_weight": 0.4,
+        "audio_weight": 0.3,
+        "visual_weight": 0.3,
+        "scoring_method": "rule_based"
+      },
+      "rank": 3,
+      "text_preview": "Huh? Shouldn't we try to... Hands in pen and tool! Uh-uh. Oh!",
+      "source": "strategy:pause_based"
+    },
+    {
+      "segment_id": "c10b2841309d",
+      "start_seconds": 125.0,
+      "end_seconds": 190.0,
+      "segment_type": "highlight",
+      "confidence": 0.0,
+      "features": {
+        "segment_id": "c10b2841309d",
+        "start_seconds": 125.0,
+        "end_seconds": 190.0,
+        "text_features": {
+          "embedding": null,
+          "word_count": 2,
+          "sentence_count": 2,
+          "avg_word_length": 3.5,
+          "sentiment_score": 0.0,
+          "keyword_density": 0.0,
+          "question_count": 0,
+          "exclamation_count": 1
+        },
+        "audio_features": {
+          "energy_mean": 0.5,
+          "energy_std": 0.1,
+          "pitch_mean": 0.0,
+          "pitch_std": 0.0,
+          "silence_ratio": 0.2,
+          "speech_rate": 0.0,
+          "volume_dynamics": 1.0,
+          "spectral_centroid": 0.0
+        },
+        "visual_features": {
+          "motion_intensity": 0.3,
+          "scene_change_count": 0,
+          "scene_change_rate": 0.0,
+          "brightness_mean": 0.5,
+          "brightness_std": 0.1,
+          "color_variance": 0.1,
+          "face_presence_ratio": 0.0,
+          "text_overlay_ratio": 0.0
+        },
+        "computed_at": "2025-12-26T16:12:55.018304",
+        "ablation_mode": "full_multimodal"
+      },
+      "score": {
+        "total_score": 0.15560000000000002,
+        "text_score": 0.0515,
+        "audio_score": 0.175,
+        "visual_score": 0.275,
+        "text_weight": 0.4,
+        "audio_weight": 0.3,
+        "visual_weight": 0.3,
+        "scoring_method": "rule_based"
+      },
+      "rank": 4,
+      "text_preview": "Hmm. Whoa!",
+      "source": "strategy:pause_based"
+    },
+    {
+      "segment_id": "1c76d9e5c76b",
+      "start_seconds": 255.0,
+      "end_seconds": 320.0,
+      "segment_type": "highlight",
+      "confidence": 0.0,
+      "features": {
+        "segment_id": "1c76d9e5c76b",
+        "start_seconds": 255.0,
+        "end_seconds": 320.0,
+        "text_features": {
+          "embedding": null,
+          "word_count": 2,
+          "sentence_count": 1,
+          "avg_word_length": 2.5,
+          "sentiment_score": 0.0,
+          "keyword_density": 0.0,
+          "question_count": 0,
+          "exclamation_count": 0
+        },
+        "audio_features": {
+          "energy_mean": 0.5,
+          "energy_std": 0.1,
+          "pitch_mean": 0.0,
+          "pitch_std": 0.0,
+          "silence_ratio": 0.2,
+          "speech_rate": 0.0,
+          "volume_dynamics": 1.0,
+          "spectral_centroid": 0.0
+        },
+        "visual_features": {
+          "motion_intensity": 0.3,
+          "scene_change_count": 0,
+          "scene_change_rate": 0.0,
+          "brightness_mean": 0.5,
+          "brightness_std": 0.1,
+          "color_variance": 0.1,
+          "face_presence_ratio": 0.0,
+          "text_overlay_ratio": 0.0
+        },
+        "computed_at": "2025-12-26T16:12:55.033304",
+        "ablation_mode": "full_multimodal"
+      },
+      "score": {
+        "total_score": 0.1356,
+        "text_score": 0.0015,
+        "audio_score": 0.175,
+        "visual_score": 0.275,
+        "text_weight": 0.4,
+        "audio_weight": 0.3,
+        "visual_weight": 0.3,
+        "scoring_method": "rule_based"
+      },
+      "rank": 5,
+      "text_preview": "Oh You",
+      "source": "strategy:pause_based"
+    }
+  ],
+  "config_snapshot": {
+    "paths": {
+      "base_dir": "C:\\Users\\bageg\\OneDrive\\Desktop\\Everthing\\Research Projects\\Movie-Shorts\\backend\\app",
+      "upload_dir": "uploads",
+      "cuts_dir": "cuts",
+      "subtitles_dir": "subtitles",
+      "features_dir": "features",
+      "logs_dir": "logs",
+      "experiments_dir": "experiments"
+    },
+    "whisper": {
+      "model_size": "small",
+      "device": "auto",
+      "compute_type": "auto",
+      "language": null,
+      "task": "transcribe",
+      "vad_filter": true,
+      "vad_parameters": {
+        "threshold": 0.5,
+        "min_speech_duration_ms": 250,
+        "min_silence_duration_ms": 100
+      }
+    },
+    "gemini": {
+      "model_name": "gemini-1.5-flash",
+      "temperature": 0.7,
+      "top_k": 1,
+      "top_p": 0.8,
+      "max_output_tokens": 2048,
+      "api_key": "AIzaSyDcnqzlMYHUtBLZc4RSphdNOMJEa5QH6SA",
+      "timeout_seconds": 120,
+      "max_retries": 3
+    },
+    "segmentation": {
+      "strategy": "pause_based",
+      "target_duration_seconds": 65.0,
+      "min_duration_seconds": 60.0,
+      "max_duration_seconds": 70.0,
+      "min_segments": 3,
+      "max_segments": 10,
+      "segments_per_5min": 2.5,
+      "silence_threshold_db": -40.0,
+      "min_silence_duration_seconds": 0.3,
+      "min_gap_seconds": 0.5,
+      "strong_gap_seconds": 1.5,
+      "scene_change_threshold": 0.4,
+      "boundary_tolerance_seconds": 5.0,
+      "segment_types": [
+        "funny",
+        "emotional",
+        "informative",
+        "dramatic",
+        "action"
+      ],
+      "use_llm_classification": true
+    },
+    "features": {
+      "text_embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "extract_text_features": true,
+      "extract_audio_features": true,
+      "audio_sample_rate": 16000,
+      "audio_hop_length": 512,
+      "audio_n_mels": 128,
+      "extract_visual_features": true,
+      "visual_sample_fps": 1.0,
+      "histogram_bins": 64,
+      "aggregation_method": "mean"
+    },
+    "scoring": {
+      "mode": "rule_based",
+      "text_weight": 0.4,
+      "audio_weight": 0.3,
+      "visual_weight": 0.3,
+      "model_path": null,
+      "normalize_scores": true,
+      "score_min": 0.0,
+      "score_max": 1.0
+    },
+    "ablation": {
+      "use_text": true,
+      "use_audio": true,
+      "use_visual": true,
+      "mode_name": "full_multimodal"
+    },
+    "video": {
+      "allowed_extensions": [
+        "avi",
+        "webm",
+        "mkv",
+        "mov",
+        "mp4"
+      ],
+      "max_file_size_bytes": 2147483648,
+      "video_codec": "libx264",
+      "audio_codec": "aac",
+      "encoding_preset": "ultrafast",
+      "encoding_threads": 4,
+      "video_bitrate": null,
+      "audio_bitrate": "128k"
+    },
+    "flask": {
+      "host": "0.0.0.0",
+      "port": 5000,
+      "debug": true,
+      "secret_key": "dev-secret-key",
+      "cors_origins": [
+        "*"
+      ]
+    },
+    "research": {
+      "experiment_name": "default",
+      "experiment_version": "1.0.0",
+      "random_seed": 42,
+      "log_level": "INFO",
+      "log_features": true,
+      "log_scores": true,
+      "log_decisions": true,
+      "save_intermediate_results": true,
+      "output_format": "json"
+    }
+  },
+  "processing_time_seconds": 216.43843126296997,
+  "ablation_mode": "full_multimodal",
+  "created_at": "2025-12-26T16:12:55.053304",
+  "version": "1.0.0"
+}
