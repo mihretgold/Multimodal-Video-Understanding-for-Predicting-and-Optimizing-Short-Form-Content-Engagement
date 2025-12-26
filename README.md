@@ -1,116 +1,101 @@
-# Movie Shorts
+# Multimodal Video Understanding for Predicting and Optimizing Short-Form Content Engagement
 
-A web application that automatically creates engaging YouTube Shorts from longer videos by analyzing content and extracting the most interesting segments.
+## Overview
 
-## Features
+**Multimodal Video Understanding for Predicting and Optimizing Short-Form Content Engagement** is a research-oriented web application that explores how **textual, audio, and temporal information** extracted from videos can be used to automatically identify and extract **highly engaging short-form segments** from long-form video content.
 
-- **Video Upload**: Drag and drop or select video files
-- **AI-Powered Analysis**: 
-  - Automatically detects engaging sections
-  - Analyzes content for humor, emotional impact, and information
-  - Suggests multiple sections based on video length
-- **Smart Cutting**:
-  - Cut videos to specific time ranges
-  - Preview cuts before applying
-  - Multiple cut suggestions per video
-- **Subtitle Support**:
-  - Extract embedded subtitles
-  - AI-powered transcription using Whisper
-  - Subtitle analysis for better content selection
-- **Export & Share**:
-  - Download cut videos
-  - Share directly to social media (Twitter, Facebook, Instagram)
-  - Copy shareable links
+The project investigates the intersection of **visual AI, multimedia signal processing, and multimodal learning**, with a focus on understanding *what makes a video segment engaging* and *how AI systems can assist in content optimization* for platforms such as YouTube Shorts, TikTok, and Instagram Reels.
 
-## Application Workflow
+Rather than relying on naive clipping or fixed heuristics, the system is designed to evolve toward **content-aware and multimodal video understanding**.
 
-Our application follows a carefully designed step-by-step process to transform long videos into engaging short clips:
+---
 
-![Movie Shorts Workflow](Images/design.png)
+## Research Motivation
 
-### Step-by-Step Process:
+Short-form video platforms prioritize clips that are:
+- semantically coherent,
+- emotionally engaging,
+- temporally well-structured, and
+- contextually meaningful.
 
-1. **Video Upload**
-   - Users can upload their video files through a drag-and-drop interface
-   - Supports multiple video formats (mp4, avi, mov, mkv, webm)
+Manually identifying such moments in long videos is time-consuming and subjective. This project explores how **AI-driven multimodal analysis** can assist in discovering high-impact segments by reasoning over:
 
-2. **Initial Analysis**
-   - Analyzes video length
-   - Provides manual cutting options for user control
-   - Prepares video for subtitle processing
+- **Textual content** (dialogue, keywords, semantic importance),
+- **Temporal structure** (pacing, continuity),
+- **Audio presence** (speech vs silence),
+- **Narrative flow** across scene boundaries.
 
-3. **Subtitle Processing - Part 1**
-   - Extracts existing subtitles from videos that have them embedded
-   - Identifies videos requiring subtitle generation
+The long-term goal is to build a system that supports **automatic highlight detection and engagement-aware video summarization** using scalable AI techniques.
 
-4. **Subtitle Processing - Part 2**
-   - Generates subtitles for videos without embedded captions
-   - Uses AI-powered Whisper model for accurate transcription
+---
 
-5. **AI Analysis**
-   - Processes subtitle timing data
-   - Identifies engaging segments based on content
-   - Suggests optimal 60-70 second sections for short-form content
+## Core Features
 
-6. **Smart Video Cutting**
-   - Automatically cuts videos based on AI recommendations
-   - Maintains video quality during the cutting process
-   - Preserves audio-visual synchronization
+### Video Processing
+- Upload long-form videos in common formats (mp4, mov, mkv, webm)
+- Video preprocessing and trimming using FFmpeg
 
-7. **Preview and Download**
-   - Displays cut video segments for review
-   - Enables preview before finalizing
-   - Provides download options for processed clips
+### Multimodal Analysis (Current Focus: Text + Time)
+- Automatic speech-to-text transcription using Whisper
+- Extraction and alignment of subtitle timestamps
+- Subtitle-driven semantic analysis for identifying moments of interest
 
-8. **Social Sharing**
-   - Direct sharing to various social media platforms
-   - Supports Twitter, Facebook, and Instagram
-   - Generates shareable links for easy distribution
+### Intelligent Temporal Segmentation
+- Identification of candidate short-form segments (≈60–70 seconds)
+- Preservation of semantic continuity across cuts
+- Multiple segment suggestions per video
 
-9. **Quality Optimization**
-   - Compresses videos for optimal file size
-   - Maintains quality standards for social media
-   - Ensures proper format compatibility
+### Subtitle-Aware Reasoning
+- Uses subtitle density, timing, and content to guide segmentation
+- Enables content-aware cutting rather than purely duration-based trimming
 
-This workflow is designed to make the process of creating short-form content as automated and user-friendly as possible, while still giving users control over the final output.
+### Export
+- Download short-form optimized video clips
+- Output suitable for major short-video platforms
 
-## Screenshots
+---
 
-### Upload and Processing
-![Upload Interface](Images/s1.png)
-*Drag and drop interface for easy video upload*
+## System Pipeline
 
-![Processing Status](Images/s2.png)
-*Real-time processing status and progress indicators*
+The system follows a modular multimodal workflow:
 
-### Subtitle Management
-![Subtitle Extraction](Images/s3.png)
-*Automatic subtitle extraction and generation*
+1. **Video Ingestion**
+   - Upload and validation of video files
+   - Extraction of metadata and duration
 
-![Subtitle Analysis](Images/s4.png)
-*AI-powered subtitle analysis for content selection*
+2. **Subtitle Acquisition**
+   - Extraction of embedded subtitles (when available)
+   - Automatic transcription using Whisper for videos without captions
 
-### Video Cutting
-![Cut Preview](Images/s5.png)
-*Preview interface for video cuts*
+3. **Temporal Alignment**
+   - Mapping subtitle timestamps to the video timeline
+   - Preparation for segment-level analysis
 
-![Multiple Cuts](Images/s6.png)
-*Multiple cut suggestions with previews*
+4. **Content Analysis**
+   - Semantic analysis of subtitles
+   - Detection of candidate engagement peaks
 
-### Export and Sharing
-![Download Options](Images/s7.png)
-*Easy download and export options*
+5. **Segment Selection**
+   - Identification of high-impact segments
+   - Optimization for short-form narrative coherence
 
-![Social Sharing](Images/s8.png)
-*Direct sharing to social media platforms*
+6. **Video Cutting**
+   - Precise trimming using FFmpeg and MoviePy
+   - Audio-visual synchronization preservation
 
-## Tech Stack
+7. **Preview and Export**
+   - User review of AI-suggested segments
+   - Download of final clips
+
+---
+
+## Technical Stack
 
 ### Frontend
 - Next.js 14
 - TypeScript
-- Tailwind CSS
 - React
+- Tailwind CSS
 
 ### Backend
 - Python
@@ -119,11 +104,29 @@ This workflow is designed to make the process of creating short-form content as 
 - Whisper (OpenAI)
 - MoviePy
 
-## Prerequisites
+---
 
-- Node.js 18+ and npm
+## Planned Research Extensions
+
+This project is intentionally designed to support future research-oriented extensions, including:
+
+- Multimodal feature fusion (text + audio + visual signals)
+- Learned engagement prediction models
+- Scene boundary detection
+- Emotion and sentiment-aware segmentation
+- Quantitative evaluation against human-selected highlights
+- Dataset creation for short-form video research
+
+---
+
+## Installation
+
+### Prerequisites
+- Node.js 18+
 - Python 3.8+
-- FFmpeg (automatically downloaded if not present)
+- FFmpeg
+
+### Setup
 
 ## Installation
 
@@ -189,31 +192,67 @@ movie-shorts/
 │   └── s8.png
 └── README.md
 ```
+## Usage Workflow
 
-## Usage
+1. Upload a long-form video file through the application interface.  
+2. Extract existing subtitles or generate new subtitles using automatic speech recognition.  
+3. Run multimodal analysis combining visual, audio, and textual signals to identify high-engagement segments.  
+4. Review AI-recommended short-form segments with associated timestamps and engagement rationale.  
+5. Select preferred segments and generate optimized short-form clips suitable for platforms like YouTube Shorts, Instagram Reels, and TikTok.  
+6. Download or share the generated clips directly.
 
-1. Upload a video file
-2. Wait for the upload to complete
-3. Click "Get Subtitles" to extract or generate subtitles
-4. Click "Analyze with AI" to get section suggestions
-5. Preview and apply cuts
-6. Download or share your cuts
+## Tech Stack
+
+### Frontend
+- Next.js 14
+- TypeScript
+- React
+- Tailwind CSS
+
+### Backend
+- Python
+- Flask
+- FFmpeg
+- MoviePy
+- Whisper (for speech-to-text)
+- Gemini (for multimodal and semantic analysis)
+
+## Prerequisites
+
+- Node.js 18 or higher
+- Python 3.8 or higher
+- FFmpeg
+- A modern web browser with JavaScript enabled
+- Google API Key (for Gemini)
+
+## Installation
+
+1. Clone the repository.
+2. Install backend dependencies using the provided requirements file.
+3. Configure environment variables for API keys.
+4. Start the backend server.
+5. Open the application in your browser and begin uploading videos.
+
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+Contributions are welcome and encouraged.
+
+1. Fork the repository.
+2. Create a new feature branch.
+3. Commit your changes with clear descriptions.
+4. Push to your branch.
+5. Open a pull request for review.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
 
 ## Acknowledgments
 
 - OpenAI for Whisper
-- FFmpeg team
-- MoviePy developers
-- Next.js team 
+- Google Gemini for multimodal reasoning
+- FFmpeg and MoviePy for video processing
+- The open-source community for foundational tools and libraries
+
+
