@@ -169,50 +169,50 @@ Systematic experiments removing modalities to quantify contributions:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        FRONTEND (HTML/JS)                        │
-│  ┌─────────┐  ┌─────────────┐  ┌───────────┐  ┌──────────────┐ │
-│  │ Upload  │  │ Video Player│  │ Analysis  │  │   Results    │ │
-│  │  Zone   │  │             │  │  Controls │  │    Panel     │ │
-│  └────┬────┘  └──────┬──────┘  └─────┬─────┘  └──────┬───────┘ │
+│                        FRONTEND (HTML/JS)                       │
+│  ┌─────────┐  ┌─────────────┐  ┌───────────┐  ┌──────────────┐  │
+│  │ Upload  │  │ Video Player│  │ Analysis  │  │   Results    │  │
+│  │  Zone   │  │             │  │  Controls │  │    Panel     │  │
+│  └────┬────┘  └──────┬──────┘  └─────┬─────┘  └──────┬───────┘  │
 └───────┼──────────────┼───────────────┼───────────────┼──────────┘
         │              │               │               │
         ▼              ▼               ▼               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      REST API (Flask)                            │
+│                      REST API (Flask)                           │
 │  /upload  /cut  /api/pipeline/run  /api/pipeline/ablation       │
 └─────────────────────────────────────────────────────────────────┘
         │
         ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    RESEARCH PIPELINE                             │
-│                                                                  │
+│                    RESEARCH PIPELINE                            │
+│                                                                 │
 │  ┌──────────┐   ┌─────────────┐   ┌─────────────────────────┐   │
 │  │ Video    │   │ Transcription│   │  Segment Detection     │   │
 │  │ Ingest   │──▶│  (Whisper)  │──▶│  (Pause/Semantic/LLM)  │   │
 │  └──────────┘   └─────────────┘   └───────────┬─────────────┘   │
-│                                               │                  │
+│                                               │                 │
 │  ┌──────────────────────────────────────────┐│                  │
 │  │         Feature Extraction               ││                  │
-│  │  ┌──────┐   ┌───────┐   ┌────────┐      │◀┘                  │
+│  │  ┌──────┐   ┌───────┐   ┌────────┐      │◀┘                 │
 │  │  │ Text │   │ Audio │   │ Visual │      │                    │
 │  │  └──┬───┘   └───┬───┘   └───┬────┘      │                    │
 │  │     └───────────┼───────────┘           │                    │
 │  └─────────────────┼───────────────────────┘                    │
-│                    ▼                                             │
+│                    ▼                                            │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Scoring & Ranking                                          │ │
+│  │  Scoring & Ranking                                         │ │
 │  │  ┌────────────┐  ┌─────────────┐  ┌──────────────────────┐ │ │
-│  │  │ Normalize  │─▶│   Weight    │─▶│   Rank by Score      │ │ │
+│  │  │ Normalize  │─▶│   Weight    │─▶│   Rank by Score     │ │ │
 │  │  │  Features  │  │   & Score   │  │   (Top-K)            │ │ │
 │  │  └────────────┘  └─────────────┘  └──────────────────────┘ │ │
 │  └────────────────────────────────────────────────────────────┘ │
-│                    │                                             │
-│                    ▼                                             │
+│                    │                                            │
+│                    ▼                                            │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Output: AnalysisResult (JSON)                              │ │
-│  │  - Ranked segments with scores                              │ │
-│  │  - Feature vectors per segment                              │ │
-│  │  - Provenance metadata                                      │ │
+│  │  Output: AnalysisResult (JSON)                             │ │
+│  │  - Ranked segments with scores                             │ │
+│  │  - Feature vectors per segment                             │ │
+│  │  - Provenance metadata                                     │ │
 │  └────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -592,20 +592,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **FFmpeg** and **MoviePy** for video processing
 - The open-source community for foundational tools
 
----
-
-## Citation
-
-If you use this work in your research, please cite:
-
-```bibtex
-@software{movie_shorts_2024,
-  title = {Multimodal Video Understanding for Short-Form Content Engagement},
-  author = {Your Name},
-  year = {2024},
-  url = {https://github.com/yourusername/movie-shorts}
-}
-```
 
 ---
 
