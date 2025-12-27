@@ -1,0 +1,54 @@
+# Render Blueprint for Movie Shorts
+# ==================================
+# Deploy this application on Render with: render blueprint sync
+#
+# IMPORTANT NOTES:
+# ----------------
+# 1. This app uses FFmpeg for video processing (installed via apt)
+# 2. Whisper model (~500MB) downloads on first request - allow startup time
+# 3. Ephemeral filesystem: Uploaded videos are LOST on redeploy
+# 4. Recommended: Use "Standard" instance (2GB RAM) for Whisper
+# 5. Set GOOGLE_API_KEY in Render dashboard for Gemini features
+
+services:
+  - type: web
+    name: movie-shorts
+    runtime: python
+    region: oregon  # Choose your preferred region
+    plan: standard  # Minimum recommended for Whisper (2GB RAM)
+    
+    # Build configuration
+    buildCommand: |
+      cd backend && pip install --upgrade pip && pip install -r requirements.txt
+      python -c "from faster_whisper import WhisperModel; WhisperModel('tiny')"
+    
+    # Start command using gunicorn for production
+    startCommand: cd backend && gunicorn --bind 0.0.0.0:$PORT --timeout 300 --workers 1 "app.app:create_app()"
+    
+    # Health check
+    healthCheckPath: /health
+    
+    # Environment variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.4"
+      - key: WHISPER_MODEL
+        value: tiny  # Use tiny for faster startup, small for better quality
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "0"
+      # Add your Google API key in Render dashboard (not in this file!)
+      - key: GOOGLE_API_KEY
+        sync: false  # Set manually in dashboard
+    
+    # System packages needed
+    # Note: FFmpeg is available by default on Render's Python runtime
+    
+    # Disk (optional - for persistent storage)
+    # Uncomment if you need videos to persist between deploys
+    # disk:
+    #   name: video-storage
+    #   mountPath: /app/backend/app/uploads
+    #   sizeGB: 5
+

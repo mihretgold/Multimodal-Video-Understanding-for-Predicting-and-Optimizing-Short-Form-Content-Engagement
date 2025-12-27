@@ -56,4 +56,19 @@ coverage.xml
 .env.production.local
 
 # FFmpeg binaries
-bin/ 
+bin/
+
+# =============================================================================
+# Runtime directories (don't commit uploaded/processed files)
+# =============================================================================
+app/uploads/
+app/cuts/
+app/subtitles/
+app/logs/
+app/experiments/results/
+app/experiments/checkpoints/
+app/features/cache/
+
+# Whisper model cache
+.cache/
+huggingface/

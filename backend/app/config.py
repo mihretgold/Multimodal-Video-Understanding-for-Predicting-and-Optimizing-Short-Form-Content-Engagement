@@ -307,6 +307,7 @@ class AblationConfig:
     - RQ1: How much does each modality contribute?
     - RQ2: Are multimodal features better than unimodal?
     - RQ3: Which combinations work best?
+    - RQ4 (NEW): How much do classical CV features add beyond signal-level?
     
     METRICS for comparison:
     - Spearman's ρ: Rank correlation with full system
@@ -315,16 +316,26 @@ class AblationConfig:
     
     HYPOTHESIS: full_multimodal > text_audio > text_only > audio_only ≈ visual_only
     
+    CV ABLATION HYPOTHESIS:
+    - visual_with_cv > visual_signal_only
+    - Because CV features (edge detection, histogram analysis) capture
+      structural information that raw pixel statistics miss.
+    
     This ordering is expected because:
     1. Text carries most semantic information
     2. Audio adds energy/dynamics not in text
     3. Visual features (currently) are low-level
+    4. CV features add edge/motion/scene structure beyond raw pixels
     """
     
     # Which modalities to enable
     use_text: bool = True
     use_audio: bool = True
     use_visual: bool = True
+    
+    # Classical Computer Vision feature control
+    # When False, only signal-level visual features are used
+    use_cv_features: bool = True
     
     # Ablation mode name (for logging and reproducibility)
     mode_name: str = "full_multimodal"
@@ -336,27 +347,55 @@ class AblationConfig:
     @classmethod
     def text_only(cls) -> "AblationConfig":
         """Text modality only - baseline for subtitle-based systems."""
-        return cls(use_text=True, use_audio=False, use_visual=False, mode_name="text_only")
+        return cls(use_text=True, use_audio=False, use_visual=False, 
+                   use_cv_features=False, mode_name="text_only")
     
     @classmethod
     def audio_only(cls) -> "AblationConfig":
         """Audio modality only - tests audio-based engagement signals."""
-        return cls(use_text=False, use_audio=True, use_visual=False, mode_name="audio_only")
+        return cls(use_text=False, use_audio=True, use_visual=False,
+                   use_cv_features=False, mode_name="audio_only")
     
     @classmethod
     def visual_only(cls) -> "AblationConfig":
-        """Visual modality only - tests motion/scene-based signals."""
-        return cls(use_text=False, use_audio=False, use_visual=True, mode_name="visual_only")
+        """Visual modality only (with CV) - tests motion/scene-based signals."""
+        return cls(use_text=False, use_audio=False, use_visual=True,
+                   use_cv_features=True, mode_name="visual_only")
+    
+    @classmethod
+    def visual_signal_only(cls) -> "AblationConfig":
+        """
+        Visual signal-level only (NO CV features).
+        
+        This is the key ablation for measuring CV contribution.
+        Uses: brightness, color_variance, motion_intensity (raw pixel diff)
+        Excludes: contrast, edge_density, motion_magnitude, histogram_diff
+        """
+        return cls(use_text=False, use_audio=False, use_visual=True,
+                   use_cv_features=False, mode_name="visual_signal_only")
     
     @classmethod
     def text_audio(cls) -> "AblationConfig":
         """Text + Audio - tests value of visual features."""
-        return cls(use_text=True, use_audio=True, use_visual=False, mode_name="text_audio")
+        return cls(use_text=True, use_audio=True, use_visual=False,
+                   use_cv_features=False, mode_name="text_audio")
+    
+    @classmethod
+    def full_no_cv(cls) -> "AblationConfig":
+        """
+        Full multimodal WITHOUT CV features.
+        
+        Uses all modalities but only signal-level visual features.
+        Compare with full_multimodal to measure CV contribution.
+        """
+        return cls(use_text=True, use_audio=True, use_visual=True,
+                   use_cv_features=False, mode_name="full_no_cv")
     
     @classmethod
     def full_multimodal(cls) -> "AblationConfig":
-        """Full multimodal - all modalities enabled (reference)."""
-        return cls(use_text=True, use_audio=True, use_visual=True, mode_name="full_multimodal")
+        """Full multimodal - all modalities + CV features enabled (reference)."""
+        return cls(use_text=True, use_audio=True, use_visual=True,
+                   use_cv_features=True, mode_name="full_multimodal")
 
 
 @dataclass
@@ -572,12 +611,28 @@ def apply_environment_overrides(config: AppConfig) -> AppConfig:
         MOVIE_SHORTS_FLASK_PORT=8080
         MOVIE_SHORTS_RESEARCH_LOG_LEVEL=DEBUG
     
+    Also supports common simplified environment variables:
+        WHISPER_MODEL=tiny (maps to whisper.model_size)
+        PORT=8080 (maps to flask.port)
+    
     Args:
         config: Base configuration to override
         
     Returns:
         Configuration with environment overrides applied
     """
+    # Handle common simplified environment variables first
+    if os.getenv("WHISPER_MODEL"):
+        config.whisper.model_size = os.getenv("WHISPER_MODEL")
+        logger.info(f"Environment override: whisper.model_size = {config.whisper.model_size}")
+    
+    if os.getenv("PORT"):
+        try:
+            config.flask.port = int(os.getenv("PORT"))
+            logger.info(f"Environment override: flask.port = {config.flask.port}")
+        except ValueError:
+            pass
+    
     prefix = "MOVIE_SHORTS_"
     
     for key, value in os.environ.items():

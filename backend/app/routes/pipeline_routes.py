@@ -67,7 +67,9 @@ def run_pipeline():
             'text_only': AblationConfig.text_only,
             'audio_only': AblationConfig.audio_only,
             'visual_only': AblationConfig.visual_only,
+            'visual_signal_only': AblationConfig.visual_signal_only,  # Visual without CV
             'text_audio': AblationConfig.text_audio,
+            'full_no_cv': AblationConfig.full_no_cv,  # All modalities, no CV features
             'full_multimodal': AblationConfig.full_multimodal,
         }
         if ablation_mode in ablation_map:

@@ -91,6 +91,7 @@ class FeatureExtractor:
                 'use_text': self.ablation.use_text,
                 'use_audio': self.ablation.use_audio,
                 'use_visual': self.ablation.use_visual,
+                'use_cv_features': self.ablation.use_cv_features,
                 'parallel': parallel
             }
         )
@@ -205,6 +206,9 @@ class FeatureExtractor:
                     segment.start_seconds,
                     segment.end_seconds
                 )
+                # Zero out CV features if disabled (keep only signal-level)
+                if not self.ablation.use_cv_features:
+                    features.visual_features = self._zero_cv_features(features.visual_features)
             except Exception as e:
                 logger.warning(f"Visual feature extraction failed: {e}")
                 features.visual_features = VisualFeatures()
@@ -262,6 +266,9 @@ class FeatureExtractor:
                     elif modality == 'audio':
                         features.audio_features = result
                     elif modality == 'visual':
+                        # Zero out CV features if disabled
+                        if not self.ablation.use_cv_features:
+                            result = self._zero_cv_features(result)
                         features.visual_features = result
                 except Exception as e:
                     logger.warning(f"Parallel {modality} extraction failed: {e}")
@@ -321,6 +328,41 @@ class FeatureExtractor:
         
         return results
     
+    def _zero_cv_features(self, visual_features: VisualFeatures) -> VisualFeatures:
+        """
+        Zero out classical CV features, keeping only signal-level features.
+        
+        This is used for ablation studies to measure the contribution of
+        CV features (edge detection, histogram analysis, etc.) vs. basic
+        signal-level features (raw pixel statistics).
+        
+        Signal-level features preserved:
+        - motion_intensity, scene_change_count/rate
+        - brightness_mean/std, color_variance
+        
+        CV features zeroed:
+        - contrast, edge_density, edge_intensity
+        - motion_magnitude, histogram_diff_mean, scene_boundaries
+        """
+        return VisualFeatures(
+            # Preserve signal-level features
+            motion_intensity=visual_features.motion_intensity,
+            scene_change_count=visual_features.scene_change_count,
+            scene_change_rate=visual_features.scene_change_rate,
+            brightness_mean=visual_features.brightness_mean,
+            brightness_std=visual_features.brightness_std,
+            color_variance=visual_features.color_variance,
+            face_presence_ratio=visual_features.face_presence_ratio,
+            text_overlay_ratio=visual_features.text_overlay_ratio,
+            # Zero out CV features
+            contrast=0.0,
+            edge_density=0.0,
+            edge_intensity=0.0,
+            motion_magnitude=0.0,
+            histogram_diff_mean=0.0,
+            scene_boundaries=[]
+        )
+    
     def _get_cache_key(self, video_path: str, segment: Segment) -> str:
         """Generate cache key for a segment."""
         return f"{video_path}:{segment.start_seconds}:{segment.end_seconds}:{self.ablation.mode_name}"
@@ -379,7 +421,9 @@ def create_extractor(
         'text_only': AblationConfig.text_only,
         'audio_only': AblationConfig.audio_only,
         'visual_only': AblationConfig.visual_only,
+        'visual_signal_only': AblationConfig.visual_signal_only,  # Visual without CV
         'text_audio': AblationConfig.text_audio,
+        'full_no_cv': AblationConfig.full_no_cv,  # All modalities, no CV features
         'full_multimodal': AblationConfig.full_multimodal,
     }
     
