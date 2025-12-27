@@ -353,16 +353,25 @@ class VisualFeatures(BaseModel):
     """
     Visual features extracted from video frames.
     
-    Attributes:
-        motion_intensity: Average motion between frames
-        scene_change_count: Number of scene changes
+    Signal-Level Features (basic statistics):
+        motion_intensity: Average motion between frames (pixel differencing)
+        scene_change_count: Number of scene changes detected
         scene_change_rate: Scene changes per second
-        brightness_mean: Average frame brightness
-        brightness_std: Variation in brightness
+        brightness_mean: Average frame brightness (luminance)
+        brightness_std: Temporal variation in brightness across frames
         color_variance: Variance in color distribution
         face_presence_ratio: Ratio of frames with faces detected
         text_overlay_ratio: Ratio of frames with detected text
+    
+    Classical Computer Vision Features:
+        contrast: Pixel-level contrast (std of grayscale intensities within frames)
+        edge_density: Ratio of edge pixels to total pixels (Canny edge detection)
+        edge_intensity: Average edge strength (gradient magnitude)
+        motion_magnitude: Frame differencing magnitude (temporal derivative)
+        histogram_diff_mean: Mean histogram distance between consecutive frames
+        scene_boundaries: Timestamps of detected scene changes (histogram-based)
     """
+    # Signal-level features (existing)
     motion_intensity: float = 0.0
     scene_change_count: int = 0
     scene_change_rate: float = 0.0
@@ -371,6 +380,127 @@ class VisualFeatures(BaseModel):
     color_variance: float = 0.0
     face_presence_ratio: float = 0.0
     text_overlay_ratio: float = 0.0
+    
+    # Classical Computer Vision features (new)
+    # Step 1: Frame-level image processing
+    contrast: float = 0.0  # Std of grayscale pixel intensities (intra-frame)
+    
+    # Step 2: Edge-based complexity
+    edge_density: float = 0.0  # Ratio of edge pixels to total pixels
+    edge_intensity: float = 0.0  # Average Canny edge strength
+    
+    # Step 3: Motion estimation via frame differencing
+    motion_magnitude: float = 0.0  # Normalized temporal derivative
+    
+    # Step 4: Histogram-based scene detection
+    histogram_diff_mean: float = 0.0  # Mean chi-square distance between frames
+    scene_boundaries: List[float] = field(default_factory=list)  # Detected cut times
+    
+    @property
+    def has_cv_features(self) -> bool:
+        """Check if any CV features were computed (non-zero)."""
+        return (self.contrast > 0 or 
+                self.edge_density > 0 or 
+                self.motion_magnitude > 0 or
+                self.histogram_diff_mean > 0)
+    
+    @property
+    def cv_feature_summary(self) -> Dict[str, float]:
+        """Get summary of CV features for quick inspection."""
+        return {
+            'contrast': self.contrast,
+            'edge_density': self.edge_density,
+            'edge_intensity': self.edge_intensity,
+            'motion_magnitude': self.motion_magnitude,
+            'histogram_diff_mean': self.histogram_diff_mean,
+            'scene_boundary_count': len(self.scene_boundaries)
+        }
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert to dictionary with clear separation of feature categories.
+        
+        This makes it easy for researchers to identify which features
+        are signal-level statistics vs. classical CV techniques.
+        """
+        return {
+            # Signal-level features (basic pixel statistics)
+            'signal_level': {
+                'motion_intensity': self.motion_intensity,
+                'scene_change_count': self.scene_change_count,
+                'scene_change_rate': self.scene_change_rate,
+                'brightness_mean': self.brightness_mean,
+                'brightness_std': self.brightness_std,
+                'color_variance': self.color_variance,
+                'face_presence_ratio': self.face_presence_ratio,
+                'text_overlay_ratio': self.text_overlay_ratio
+            },
+            # Classical Computer Vision features
+            'computer_vision': {
+                'contrast': self.contrast,
+                'edge_density': self.edge_density,
+                'edge_intensity': self.edge_intensity,
+                'motion_magnitude': self.motion_magnitude,
+                'histogram_diff_mean': self.histogram_diff_mean,
+                'scene_boundaries': self.scene_boundaries
+            },
+            # Flat structure for backward compatibility
+            'motion_intensity': self.motion_intensity,
+            'scene_change_count': self.scene_change_count,
+            'scene_change_rate': self.scene_change_rate,
+            'brightness_mean': self.brightness_mean,
+            'brightness_std': self.brightness_std,
+            'color_variance': self.color_variance,
+            'face_presence_ratio': self.face_presence_ratio,
+            'text_overlay_ratio': self.text_overlay_ratio,
+            'contrast': self.contrast,
+            'edge_density': self.edge_density,
+            'edge_intensity': self.edge_intensity,
+            'motion_magnitude': self.motion_magnitude,
+            'histogram_diff_mean': self.histogram_diff_mean,
+            'scene_boundaries': self.scene_boundaries
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "VisualFeatures":
+        """Create from dictionary, handling both nested and flat structures."""
+        # Check if it's the new nested structure
+        if 'signal_level' in data and 'computer_vision' in data:
+            signal = data['signal_level']
+            cv = data['computer_vision']
+            return cls(
+                motion_intensity=signal.get('motion_intensity', 0.0),
+                scene_change_count=signal.get('scene_change_count', 0),
+                scene_change_rate=signal.get('scene_change_rate', 0.0),
+                brightness_mean=signal.get('brightness_mean', 0.0),
+                brightness_std=signal.get('brightness_std', 0.0),
+                color_variance=signal.get('color_variance', 0.0),
+                face_presence_ratio=signal.get('face_presence_ratio', 0.0),
+                text_overlay_ratio=signal.get('text_overlay_ratio', 0.0),
+                contrast=cv.get('contrast', 0.0),
+                edge_density=cv.get('edge_density', 0.0),
+                edge_intensity=cv.get('edge_intensity', 0.0),
+                motion_magnitude=cv.get('motion_magnitude', 0.0),
+                histogram_diff_mean=cv.get('histogram_diff_mean', 0.0),
+                scene_boundaries=cv.get('scene_boundaries', [])
+            )
+        # Flat structure (backward compatibility)
+        return cls(
+            motion_intensity=data.get('motion_intensity', 0.0),
+            scene_change_count=data.get('scene_change_count', 0),
+            scene_change_rate=data.get('scene_change_rate', 0.0),
+            brightness_mean=data.get('brightness_mean', 0.0),
+            brightness_std=data.get('brightness_std', 0.0),
+            color_variance=data.get('color_variance', 0.0),
+            face_presence_ratio=data.get('face_presence_ratio', 0.0),
+            text_overlay_ratio=data.get('text_overlay_ratio', 0.0),
+            contrast=data.get('contrast', 0.0),
+            edge_density=data.get('edge_density', 0.0),
+            edge_intensity=data.get('edge_intensity', 0.0),
+            motion_magnitude=data.get('motion_magnitude', 0.0),
+            histogram_diff_mean=data.get('histogram_diff_mean', 0.0),
+            scene_boundaries=data.get('scene_boundaries', [])
+        )
 
 
 @dataclass 
@@ -451,7 +581,7 @@ class SegmentFeatures(BaseModel):
             end_seconds=data['end_seconds'],
             text_features=TextFeatures(**data['text_features']) if data.get('text_features') else None,
             audio_features=AudioFeatures(**data['audio_features']) if data.get('audio_features') else None,
-            visual_features=VisualFeatures(**data['visual_features']) if data.get('visual_features') else None,
+            visual_features=VisualFeatures.from_dict(data['visual_features']) if data.get('visual_features') else None,
             computed_at=data.get('computed_at', datetime.now().isoformat()),
             ablation_mode=data.get('ablation_mode', 'full_multimodal')
         )

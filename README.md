@@ -10,6 +10,8 @@
 
 [Problem](#problem-formulation) • [Methodology](#methodology) • [Architecture](#system-architecture) • [Installation](#installation) • [Usage](#usage) • [Research](#research-contributions)
 
+### 🎬 [Watch Video Demo](https://drive.google.com/file/d/1wrS7uFJkV_PpwZuZO-V7l6q_E7Gn2i4l/view?usp=sharing)
+
 </div>
 
 ---
@@ -113,13 +115,27 @@ We implement multiple segmentation strategies:
 - Spectral centroid
 ```
 
-#### Visual Features (via FFmpeg)
+#### Visual Features (via FFmpeg + OpenCV)
+
+**Signal-Level Features** (basic pixel statistics):
 ```
-- Motion intensity (frame difference)
-- Scene change count/rate
+- Motion intensity (raw frame difference)
+- Scene change count/rate (threshold-based)
 - Brightness (mean luminance)
 - Color variance
 ```
+
+**Classical Computer Vision Features** (OpenCV):
+```
+- Contrast (std of grayscale intensities)
+- Edge density (Canny edge detection ratio)
+- Edge intensity (Sobel gradient magnitude)
+- Motion magnitude (thresholded frame differencing)
+- Histogram diff (chi-square distance)
+- Scene boundaries (histogram-based cut detection)
+```
+
+> **Research Note**: We explicitly separate signal-level features from CV features to enable ablation studies measuring the contribution of classical CV techniques.
 
 ### 3. Engagement Scoring
 
@@ -150,18 +166,148 @@ Train a regressor on human-annotated engagement labels.
 
 Systematic experiments removing modalities to quantify contributions:
 
-| Mode | Text | Audio | Visual | Purpose |
-|------|------|-------|--------|---------|
-| `full_multimodal` | ✓ | ✓ | ✓ | Complete system |
-| `text_only` | ✓ | ✗ | ✗ | Text baseline |
-| `audio_only` | ✗ | ✓ | ✗ | Audio baseline |
-| `visual_only` | ✗ | ✗ | ✓ | Visual baseline |
-| `text_audio` | ✓ | ✓ | ✗ | No visual |
+| Mode | Text | Audio | Visual | CV | Purpose |
+|------|------|-------|--------|-----|---------|
+| `full_multimodal` | ✓ | ✓ | ✓ | ✓ | Complete system (reference) |
+| `full_no_cv` | ✓ | ✓ | ✓ | ✗ | Measure CV contribution |
+| `text_only` | ✓ | ✗ | ✗ | ✗ | Text baseline |
+| `audio_only` | ✗ | ✓ | ✗ | ✗ | Audio baseline |
+| `visual_only` | ✗ | ✗ | ✓ | ✓ | Visual with CV |
+| `visual_signal_only` | ✗ | ✗ | ✓ | ✗ | Visual signal-level only |
+| `text_audio` | ✓ | ✓ | ✗ | ✗ | No visual features |
 
 **Metrics**:
 - Spearman's ρ (rank correlation with full system)
 - Kendall's τ (concordance)
 - Top-K agreement (overlap in top selections)
+
+---
+
+## Classical Computer Vision Components
+
+This section documents the **foundational computer vision techniques** implemented in the visual feature extraction module. These are classical CV algorithms commonly taught in introductory vision courses.
+
+### Why Classical CV?
+
+While deep learning approaches (CLIP, ViT) offer powerful semantic understanding, classical CV techniques provide:
+
+1. **Interpretability** — Features have clear geometric/statistical meaning
+2. **Efficiency** — No GPU required, runs on CPU
+3. **Foundation** — Core concepts underlying modern methods
+4. **Ablation** — Measurable contribution to engagement scoring
+
+### Implemented Techniques
+
+#### 1. Contrast (Image Texture Measure)
+
+**Concept**: Standard deviation of grayscale pixel intensities within a frame.
+
+```
+contrast = std(grayscale_pixels) / 127.5
+```
+
+**CV Foundation**: Contrast measures intra-frame intensity variation, a fundamental image quality metric. High contrast indicates rich texture and sharp edges; low contrast suggests flat, uniform regions.
+
+**Engagement relevance**: Visually complex scenes (high contrast) may be more engaging than flat scenes.
+
+#### 2. Canny Edge Detection
+
+**Concept**: Multi-stage algorithm to detect edges (intensity discontinuities).
+
+```python
+edges = cv2.Canny(gray, low_threshold=50, high_threshold=150)
+edge_density = edge_pixels / total_pixels
+```
+
+**CV Foundation**: 
+1. Gaussian smoothing to reduce noise
+2. Sobel operators for gradient computation (Gx, Gy)
+3. Non-maximum suppression to thin edges
+4. Hysteresis thresholding (strong/weak edge linking)
+
+**Features extracted**:
+- `edge_density` — Ratio of edge pixels (visual complexity)
+- `edge_intensity` — Mean gradient magnitude (edge strength)
+
+**Engagement relevance**: Action sequences and detailed scenes have higher edge density.
+
+#### 3. Temporal Frame Differencing
+
+**Concept**: Detect motion by computing absolute difference between consecutive frames.
+
+```python
+motion = |frame[t] - frame[t-1]|
+significant_motion = motion > threshold  # Filter noise
+motion_magnitude = sqrt(coverage * strength)
+```
+
+**CV Foundation**: Temporal derivative estimation for motion detection. Simpler than optical flow but effective for measuring activity level.
+
+**Key improvement over raw differencing**:
+- Thresholding (>10 pixels) filters compression artifacts
+- Separate coverage (how much moves) and strength (how fast)
+
+**Limitations** (documented for research honesty):
+- Cannot distinguish object motion from camera motion
+- Sensitive to lighting changes
+- Does not capture motion direction
+
+#### 4. Histogram-Based Scene Detection
+
+**Concept**: Detect shot boundaries by comparing color histograms of consecutive frames.
+
+```python
+hist = cv2.calcHist([frame], [0], None, [64], [0, 256])
+chi_square = cv2.compareHist(hist_prev, hist_curr, cv2.HISTCMP_CHISQR)
+if chi_square > threshold:
+    scene_boundaries.append(timestamp)
+```
+
+**CV Foundation**: 
+- Histograms summarize global color distribution
+- Chi-square distance measures distribution divergence
+- More robust to camera motion than pixel differencing
+
+**Features extracted**:
+- `histogram_diff_mean` — Average chi-square distance
+- `scene_boundaries` — List of detected cut timestamps
+
+### CV Feature Ablation
+
+To measure the contribution of CV features vs. signal-level features:
+
+| Ablation Mode | Visual Features |
+|---------------|-----------------|
+| `full_multimodal` | Signal-level + CV features |
+| `full_no_cv` | Signal-level only (CV zeroed) |
+| `visual_only` | CV features enabled |
+| `visual_signal_only` | Signal-level only |
+
+**Expected hypothesis**: `full_multimodal` > `full_no_cv` because CV features capture structural information (edges, motion patterns, scene structure) that raw pixel statistics miss.
+
+### JSON Output Structure
+
+Visual features are exposed with clear separation:
+
+```json
+{
+  "visual_features": {
+    "signal_level": {
+      "motion_intensity": 0.25,
+      "brightness_mean": 0.6,
+      "color_variance": 0.3
+    },
+    "computer_vision": {
+      "contrast": 0.45,
+      "edge_density": 0.15,
+      "edge_intensity": 0.35,
+      "motion_magnitude": 0.28,
+      "histogram_diff_mean": 0.12,
+      "scene_boundaries": [10.5, 25.0]
+    }
+  }
+}
+```
 
 ---
 
@@ -280,6 +426,7 @@ Video → Pipeline[6 Stages] → Features[3 Modalities] → Score → Rank
 |-----------|------------|
 | Web Framework | Flask 2.x |
 | Video Processing | FFmpeg, MoviePy |
+| Computer Vision | OpenCV (cv2) |
 | Speech-to-Text | faster-whisper (CTranslate2) |
 | LLM (optional) | Google Gemini |
 | Data Models | Python dataclasses |
@@ -528,7 +675,7 @@ This project contributes:
 | **No ground truth** | No human-annotated engagement labels | Cannot train supervised models |
 | **Rule-based scoring** | Hand-crafted weights, not learned | May not generalize |
 | **Single language** | Primarily English support | Limited applicability |
-| **FFmpeg features** | Basic signal-level features | Missing semantic visual understanding |
+| **No semantic vision** | Classical CV only (no deep learning) | Missing object/scene understanding |
 | **No real-time** | Batch processing only | Not suitable for live streams |
 
 ### Future Work
@@ -590,6 +737,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **OpenAI** for Whisper speech-to-text
 - **Google** for Gemini multimodal reasoning
 - **FFmpeg** and **MoviePy** for video processing
+- **OpenCV** for classical computer vision algorithms
 - The open-source community for foundational tools
 
 

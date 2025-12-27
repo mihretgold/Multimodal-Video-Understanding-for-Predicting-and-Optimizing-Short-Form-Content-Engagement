@@ -676,6 +676,17 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.5rem;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        
+        .ablation-modes::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .ablation-modes::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
         }
 
         .ablation-mode {
@@ -963,7 +974,7 @@
                 <span class="logo-text">Movie Shorts</span>
             </div>
             <p class="tagline">Multimodal Video Understanding for Short-Form Content</p>
-            <span class="version-badge">Research Pipeline v2.0</span>
+            <span class="version-badge">Research Pipeline v2.1 + CV Features</span>
         </header>
 
         <!-- Main Content -->
@@ -1075,7 +1086,12 @@
                                 <div class="ablation-mode selected" data-mode="full_multimodal">
                                     <div class="ablation-mode-icon">🎯</div>
                                     <div class="ablation-mode-name">Full Multimodal</div>
-                                    <div class="ablation-mode-desc">Text + Audio + Visual</div>
+                                    <div class="ablation-mode-desc">All modalities + CV</div>
+                                </div>
+                                <div class="ablation-mode" data-mode="full_no_cv">
+                                    <div class="ablation-mode-icon">📉</div>
+                                    <div class="ablation-mode-name">No CV Features</div>
+                                    <div class="ablation-mode-desc">Signal-level only</div>
                                 </div>
                                 <div class="ablation-mode" data-mode="text_only">
                                     <div class="ablation-mode-icon">📝</div>
@@ -1089,13 +1105,18 @@
                                 </div>
                                 <div class="ablation-mode" data-mode="visual_only">
                                     <div class="ablation-mode-icon">👁️</div>
-                                    <div class="ablation-mode-name">Visual Only</div>
-                                    <div class="ablation-mode-desc">Video frames</div>
+                                    <div class="ablation-mode-name">Visual + CV</div>
+                                    <div class="ablation-mode-desc">Frames with CV</div>
+                                </div>
+                                <div class="ablation-mode" data-mode="visual_signal_only">
+                                    <div class="ablation-mode-icon">📊</div>
+                                    <div class="ablation-mode-name">Visual Signal</div>
+                                    <div class="ablation-mode-desc">No CV features</div>
                                 </div>
                                 <div class="ablation-mode" data-mode="text_audio">
                                     <div class="ablation-mode-icon">🎙️</div>
                                     <div class="ablation-mode-name">Text + Audio</div>
-                                    <div class="ablation-mode-desc">No visual features</div>
+                                    <div class="ablation-mode-desc">No visual</div>
                                 </div>
                             </div>
                         </div>
@@ -1651,25 +1672,30 @@
                                     <div class="score-fill" style="width: ${Math.min(100, (score.total_score || 0) * 100)}%"></div>
                                 </div>
                                 <div class="score-breakdown">
-                                    <div class="score-item">
-                                        <div class="score-item-label">
-                                            <span class="modality-icon">📝</span> Text
-                                        </div>
-                                        <div class="score-item-value">${formatScore(score.text_score)}</div>
-                                    </div>
-                                    <div class="score-item">
-                                        <div class="score-item-label">
-                                            <span class="modality-icon">🔊</span> Audio
-                                        </div>
-                                        <div class="score-item-value">${formatScore(score.audio_score)}</div>
-                                    </div>
-                                    <div class="score-item">
-                                        <div class="score-item-label">
-                                            <span class="modality-icon">👁️</span> Visual
-                                        </div>
-                                        <div class="score-item-value">${formatScore(score.visual_score)}</div>
-                                    </div>
-                                </div>
+                                                    <div class="score-item">
+                                                        <div class="score-item-label">
+                                                            <span class="modality-icon">📝</span> Text
+                                                        </div>
+                                                        <div class="score-item-value">${formatScore(score.text_score)}</div>
+                                                    </div>
+                                                    <div class="score-item">
+                                                        <div class="score-item-label">
+                                                            <span class="modality-icon">🔊</span> Audio
+                                                        </div>
+                                                        <div class="score-item-value">${formatScore(score.audio_score)}</div>
+                                                    </div>
+                                                    <div class="score-item">
+                                                        <div class="score-item-label">
+                                                            <span class="modality-icon">👁️</span> Visual
+                                                        </div>
+                                                        <div class="score-item-value">${formatScore(score.visual_score)}</div>
+                                                    </div>
+                                                </div>
+                                                ${features.visual_features && (features.visual_features.computer_vision || features.visual_features.contrast) ? `
+                                                    <div class="cv-indicator" style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--accent-secondary);">
+                                                        🔬 CV Features: ${features.visual_features.computer_vision?.contrast || features.visual_features.contrast ? 'Active' : 'Disabled'}
+                                                    </div>
+                                                ` : ''}
                             </div>
                         ` : ''}
                         
@@ -1755,24 +1781,66 @@
             
             if (features.visual_features) {
                 const vf = features.visual_features;
+                // Check if we have the new structured format with signal_level and computer_vision
+                const signalLevel = vf.signal_level || vf;
+                const cvFeatures = vf.computer_vision || vf;
+                
+                // Signal-level features
                 html += `
+                    <div class="feature-item" style="grid-column: span 2; border-bottom: 2px solid var(--accent-primary); padding-bottom: 0.5rem; margin-bottom: 0.25rem;">
+                        <span class="feature-name" style="color: var(--accent-primary); font-weight: 500;">📊 Signal-Level Features</span>
+                    </div>
                     <div class="feature-item">
                         <span class="feature-name">Motion Intensity</span>
-                        <span class="feature-value">${formatScore(vf.motion_intensity)}</span>
+                        <span class="feature-value">${formatScore(signalLevel.motion_intensity)}</span>
                     </div>
                     <div class="feature-item">
                         <span class="feature-name">Scene Changes</span>
-                        <span class="feature-value">${vf.scene_change_count || 0}</span>
+                        <span class="feature-value">${signalLevel.scene_change_count || 0}</span>
                     </div>
                     <div class="feature-item">
                         <span class="feature-name">Brightness</span>
-                        <span class="feature-value">${formatScore(vf.brightness_mean)}</span>
+                        <span class="feature-value">${formatScore(signalLevel.brightness_mean)}</span>
                     </div>
                     <div class="feature-item">
                         <span class="feature-name">Color Variance</span>
-                        <span class="feature-value">${formatScore(vf.color_variance)}</span>
+                        <span class="feature-value">${formatScore(signalLevel.color_variance)}</span>
                     </div>
                 `;
+                
+                // Classical CV features (only show if present)
+                const hasCV = cvFeatures.contrast || cvFeatures.edge_density || cvFeatures.motion_magnitude;
+                if (hasCV) {
+                    html += `
+                        <div class="feature-item" style="grid-column: span 2; border-bottom: 2px solid var(--accent-secondary); padding-bottom: 0.5rem; margin-bottom: 0.25rem; margin-top: 0.5rem;">
+                            <span class="feature-name" style="color: var(--accent-secondary); font-weight: 500;">🔬 Computer Vision Features</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Contrast</span>
+                            <span class="feature-value">${formatScore(cvFeatures.contrast)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Edge Density</span>
+                            <span class="feature-value">${formatScore(cvFeatures.edge_density)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Edge Intensity</span>
+                            <span class="feature-value">${formatScore(cvFeatures.edge_intensity)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Motion Magnitude</span>
+                            <span class="feature-value">${formatScore(cvFeatures.motion_magnitude)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Histogram Diff</span>
+                            <span class="feature-value">${formatScore(cvFeatures.histogram_diff_mean)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Scene Cuts</span>
+                            <span class="feature-value">${(cvFeatures.scene_boundaries || []).length}</span>
+                        </div>
+                    `;
+                }
             }
             
             html += '</div>';
@@ -1843,9 +1911,11 @@
         function getModeIcon(mode) {
             const icons = {
                 'full_multimodal': '🎯',
+                'full_no_cv': '📉',
                 'text_only': '📝',
                 'audio_only': '🔊',
                 'visual_only': '👁️',
+                'visual_signal_only': '📊',
                 'text_audio': '🎙️'
             };
             return icons[mode] || '📊';
