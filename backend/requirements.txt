@@ -33,7 +33,9 @@ pandas>=2.0.0
 python-dotenv>=1.0.0
 requests>=2.31.0
 
-# Google AI (optional - for legacy Gemini features)
+# Google AI (optional - for Gemini features)
+# Note: google-generativeai is deprecated but still works
+# The new google-genai package has a different API
 google-generativeai>=0.3.0
 
 # Testing (can be excluded in production)

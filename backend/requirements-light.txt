@@ -1,0 +1,37 @@
+# Movie Shorts - LIGHTWEIGHT Requirements for Free Tier
+# =====================================================
+# This removes Whisper (no transcription) to fit in 512MB RAM
+# Use this only if you cannot upgrade to Standard tier
+
+# Web Framework
+flask>=2.3.0
+flask-cors>=4.0.0
+gunicorn>=21.0.0
+
+# Video Processing (lighter)
+moviepy>=1.0.3
+ffmpeg-python>=0.2.0
+
+# Computer Vision (headless)
+opencv-python-headless>=4.8.0
+
+# Numerical (required)
+numpy>=1.24.0
+
+# NLP (lightweight)
+nltk>=3.8.0
+
+# Environment
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# NOTE: Removed to save memory:
+# - torch (500MB+)
+# - faster-whisper (requires torch)
+# - scikit-learn
+# - google-generativeai
+# - pandas
+
+# With these removed, transcription will NOT work
+# Only manual video cutting will be available
+
