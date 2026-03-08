@@ -40,6 +40,76 @@ def _get_allowed_extensions() -> set:
 ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'avi', 'mov', 'mkv', 'webm'}
 
 # =============================================================================
+# FFMPEG PATH RESOLUTION
+# =============================================================================
+
+_ffmpeg_path = None
+
+def get_ffmpeg_path() -> str:
+    """
+    Resolve the path to the FFmpeg executable.
+
+    Checks (in order):
+    1. FFmpeg on the system PATH
+    2. FFmpeg bundled with imageio_ffmpeg (installed via moviepy)
+
+    Returns the path string (may be just 'ffmpeg' if it's on PATH).
+    """
+    global _ffmpeg_path
+    if _ffmpeg_path is not None:
+        return _ffmpeg_path
+
+    import shutil
+    if shutil.which("ffmpeg"):
+        _ffmpeg_path = "ffmpeg"
+        return _ffmpeg_path
+
+    try:
+        import imageio_ffmpeg
+        path = imageio_ffmpeg.get_ffmpeg_exe()
+        if path and os.path.isfile(path):
+            _ffmpeg_path = path
+            logger.info(f"Using imageio_ffmpeg bundled FFmpeg: {path}")
+            return _ffmpeg_path
+    except ImportError:
+        pass
+
+    logger.warning("FFmpeg not found on PATH or via imageio_ffmpeg")
+    _ffmpeg_path = "ffmpeg"
+    return _ffmpeg_path
+
+
+_ffprobe_path = None
+
+def get_ffprobe_path() -> str:
+    """
+    Resolve the path to the FFprobe executable.
+
+    Checks the system PATH first, then tries to find it alongside
+    the imageio_ffmpeg bundled binary.
+    """
+    global _ffprobe_path
+    if _ffprobe_path is not None:
+        return _ffprobe_path
+
+    import shutil
+    if shutil.which("ffprobe"):
+        _ffprobe_path = "ffprobe"
+        return _ffprobe_path
+
+    ffmpeg = get_ffmpeg_path()
+    if ffmpeg != "ffmpeg":
+        probe_candidate = ffmpeg.replace("ffmpeg", "ffprobe")
+        if os.path.isfile(probe_candidate):
+            _ffprobe_path = probe_candidate
+            logger.info(f"Using ffprobe adjacent to imageio ffmpeg: {probe_candidate}")
+            return _ffprobe_path
+
+    logger.warning("FFprobe not found on PATH")
+    _ffprobe_path = "ffprobe"
+    return _ffprobe_path
+
+# =============================================================================
 # FILE VALIDATION
 # =============================================================================
 
@@ -144,7 +214,7 @@ def check_subtitles(filepath: str) -> bool:
     """
     try:
         cmd = [
-            'ffprobe',
+            get_ffprobe_path(),
             '-v', 'quiet',
             '-print_format', 'json',
             '-show_streams',
@@ -180,7 +250,7 @@ def extract_subtitles(filepath: str, filename: str, subtitles_folder: str) -> st
         subtitle_path = os.path.join(subtitles_folder, f"{os.path.splitext(filename)[0]}.srt")
         
         cmd = [
-            'ffmpeg',
+            get_ffmpeg_path(),
             '-y',  # Overwrite output file if it exists
             '-i', filepath,
             '-map', '0:s:0',

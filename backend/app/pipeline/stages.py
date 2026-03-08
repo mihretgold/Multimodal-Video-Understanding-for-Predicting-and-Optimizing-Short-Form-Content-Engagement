@@ -350,6 +350,10 @@ class FeatureExtractionStage(ConditionalStage):
     - Text features: sentiment, word count, speech rate
     - Audio features: energy, silence ratio, dynamics
     - Visual features: motion, scene changes, brightness
+    - Deep features: CLIP, Wav2Vec2 emotion, Sentence Transformers, FER
+    
+    Segment processing is parallelized across CPU cores via
+    ProcessPoolExecutor (with automatic sequential fallback).
     
     Reads:
         - context.candidate_segments
@@ -375,11 +379,17 @@ class FeatureExtractionStage(ConditionalStage):
             modalities.append("audio")
         if config.use_visual:
             modalities.append("visual")
-        return f"Extract features: {', '.join(modalities) or 'none'}"
+        mode = "parallel" if self.use_multiprocessing else "sequential"
+        return f"Extract features ({mode}): {', '.join(modalities) or 'none'}"
     
-    def __init__(self, parallel: bool = False):
+    @property
+    def cacheable(self) -> bool:
+        return True
+
+    def __init__(self, parallel: bool = False, use_multiprocessing: bool = True):
         self._extractor = None
         self.parallel = parallel
+        self.use_multiprocessing = use_multiprocessing
     
     def should_run(self, context: PipelineContext) -> bool:
         """Run if any modality is enabled in ablation config."""
@@ -400,20 +410,21 @@ class FeatureExtractionStage(ConditionalStage):
     def _execute(self, context: PipelineContext) -> None:
         extractor = self._get_extractor(context)
         
+        n = len(context.candidate_segments)
         logger.info(
-            f"Extracting features for {len(context.candidate_segments)} segments "
-            f"(mode: {context.config.ablation.mode_name})"
+            f"Extracting features for {n} segments "
+            f"(mode: {context.config.ablation.mode_name}, "
+            f"multiprocessing: {self.use_multiprocessing})"
         )
         
-        # Extract features for each segment
         features_dict = extractor.extract_batch(
             video_path=context.video_path,
             segments=context.candidate_segments,
             subtitle_data=context.subtitle_data,
-            result_id=context.result_id
+            result_id=context.result_id,
+            use_multiprocessing=self.use_multiprocessing,
         )
         
-        # Update context and segments
         context.segment_features = features_dict
         
         for segment in context.candidate_segments:
@@ -429,7 +440,23 @@ class FeatureExtractionStage(ConditionalStage):
             modalities.append("audio")
         if context.config.ablation.use_visual:
             modalities.append("visual")
-        return f"{count} segments, modalities: {', '.join(modalities)}"
+        mode = "parallel" if self.use_multiprocessing else "sequential"
+        return f"{count} segments ({mode}), modalities: {', '.join(modalities)}"
+
+    def _get_cache_data(self, context: PipelineContext) -> dict:
+        return {
+            seg_id: feat.to_dict()
+            for seg_id, feat in context.segment_features.items()
+        }
+
+    def _restore_from_cache(self, context: PipelineContext, cached_data: dict) -> None:
+        context.segment_features = {
+            seg_id: SegmentFeatures.from_dict(feat_dict)
+            for seg_id, feat_dict in cached_data.items()
+        }
+        for segment in context.candidate_segments:
+            if segment.segment_id in context.segment_features:
+                segment.features = context.segment_features[segment.segment_id]
 
 
 # =============================================================================

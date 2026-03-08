@@ -27,7 +27,15 @@ from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
 import logging
-import google.generativeai as genai
+# Google AI import (optional - for legacy Gemini features)
+import warnings
+warnings.filterwarnings("ignore", message=".*google.generativeai.*deprecated.*")
+try:
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
+except ImportError:
+    genai = None
+    GENAI_AVAILABLE = False
 from dotenv import load_dotenv
 from flask_cors import CORS
 
@@ -50,8 +58,8 @@ load_dotenv()
 config = get_config()
 apply_environment_overrides(config)
 
-# Configure Google Generative AI using config
-if config.gemini.api_key:
+# Configure Google Generative AI using config (optional)
+if GENAI_AVAILABLE and config.gemini.api_key:
     genai.configure(api_key=config.gemini.api_key)
 
 # Configure logging

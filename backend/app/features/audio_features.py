@@ -22,6 +22,7 @@ import struct
 
 from ..models import AudioFeatures
 from ..config import get_config
+from ..utils.video_utils import get_ffmpeg_path
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +105,7 @@ class AudioFeatureExtractor:
             
             # Use FFmpeg to extract audio as raw PCM (16-bit signed, mono)
             cmd = [
-                'ffmpeg',
+                get_ffmpeg_path(),
                 '-y',
                 '-ss', str(start_seconds),
                 '-t', str(duration),
