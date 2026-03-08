@@ -107,7 +107,7 @@ def cut_video():
             if not is_valid:
                 return jsonify({'error': error_msg}), 400
             
-            cut = video.subclipped(start_time, end_time)
+            cut = video.subclip(start_time, end_time)
             
             cut.write_videofile(
                 output_path,

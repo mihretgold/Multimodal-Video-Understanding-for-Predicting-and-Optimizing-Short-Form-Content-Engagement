@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.2.0-blue)
 ![Python](https://img.shields.io/badge/python-3.8+-green)
 ![License](https://img.shields.io/badge/license-MIT-purple)
 
@@ -10,7 +10,7 @@
 
 [Problem](#problem-formulation) • [Methodology](#methodology) • [Architecture](#system-architecture) • [Installation](#installation) • [Usage](#usage) • [Research](#research-contributions)
 
-### 🎬 [Watch Video Demo](https://drive.google.com/file/d/1wrS7uFJkV_PpwZuZO-V7l6q_E7Gn2i4l/view?usp=sharing)
+### [Watch Video Demo](https://drive.google.com/file/d/1wrS7uFJkV_PpwZuZO-V7l6q_E7Gn2i4l/view?usp=sharing)
 
 </div>
 
@@ -20,7 +20,7 @@
 
 This project investigates **multimodal video understanding** for predicting and optimizing short-form content engagement. Given a long-form video, the system automatically identifies and extracts segments that are likely to be highly engaging on platforms such as YouTube Shorts, TikTok, and Instagram Reels.
 
-The system combines **textual analysis** (from subtitles), **audio features** (energy, speech patterns), and **visual features** (motion, scene changes) through a configurable scoring function. We provide a formal **baseline system** and systematic **ablation studies** to quantify the contribution of each modality.
+The system combines **textual analysis** (from subtitles), **audio features** (energy, speech patterns), **visual features** (motion, scene changes), and **deep learning models** (CLIP, Wav2Vec2, Sentence Transformers, face emotion detection) through a configurable scoring function. We provide a formal **baseline system** and systematic **ablation studies** to quantify the contribution of each modality.
 
 ---
 
@@ -29,6 +29,9 @@ The system combines **textual analysis** (from subtitles), **audio features** (e
 - [Problem Formulation](#problem-formulation)
 - [Methodology](#methodology)
 - [System Architecture](#system-architecture)
+- [Deep Learning Features](#deep-learning-features)
+- [Classical Computer Vision Components](#classical-computer-vision-components)
+- [Performance Optimizations](#performance-optimizations)
 - [Baseline vs Enhanced System](#baseline-vs-enhanced-system)
 - [Technical Stack](#technical-stack)
 - [Installation](#installation)
@@ -47,37 +50,39 @@ The system combines **textual analysis** (from subtitles), **audio features** (e
 ### The Challenge
 
 Short-form video platforms prioritize content that is:
-- **Semantically coherent** – tells a complete micro-story
-- **Emotionally engaging** – triggers viewer response  
-- **Temporally well-structured** – good pacing and flow
-- **Contextually meaningful** – understandable without full context
+- **Semantically coherent** -- tells a complete micro-story
+- **Emotionally engaging** -- triggers viewer response  
+- **Temporally well-structured** -- good pacing and flow
+- **Contextually meaningful** -- understandable without full context
 
 Manually identifying such moments in long videos is:
-1. Time-consuming (hours of footage → minutes of highlights)
+1. Time-consuming (hours of footage to minutes of highlights)
 2. Subjective (what's "engaging" varies by audience)
 3. Inconsistent (human fatigue affects quality)
 
 ### Formal Problem Statement
 
-Given a video $V$ of duration $T$ seconds, we seek to:
+Given a video \(V\) of duration \(T\) seconds, we seek to:
 
-1. **Segment** the video into candidate clips $\{S_1, S_2, ..., S_n\}$ where each segment $S_i = (t_{start}, t_{end})$ satisfies duration constraints (60-70 seconds for short-form)
+1. **Segment** the video into candidate clips \(\{S_1, S_2, \ldots, S_n\}\) where each segment \(S_i = (t_{\text{start}}, t_{\text{end}})\) satisfies duration constraints (60-70 seconds for short-form)
 
 2. **Extract features** for each segment across modalities:
-   - Text features $f_t(S_i)$ from subtitles/transcription
-   - Audio features $f_a(S_i)$ from the audio track
-   - Visual features $f_v(S_i)$ from video frames
+   - Text features \(f_t(S_i)\) from subtitles/transcription
+   - Audio features \(f_a(S_i)\) from the audio track
+   - Visual features \(f_v(S_i)\) from video frames
+   - Deep features \(f_d(S_i)\) from pretrained neural networks
 
 3. **Score** each segment using an engagement function:
-   $$E(S_i) = w_t \cdot f_t(S_i) + w_a \cdot f_a(S_i) + w_v \cdot f_v(S_i)$$
+   \[E(S_i) = w_t \cdot f_t(S_i) + w_a \cdot f_a(S_i) + w_v \cdot f_v(S_i)\]
 
-4. **Rank** segments by engagement score and return top-$k$
+4. **Rank** segments by engagement score and return top-\(k\)
 
 ### Research Questions
 
 - **RQ1**: How much does each modality contribute to engagement prediction?
 - **RQ2**: Are multimodal features superior to unimodal baselines?
 - **RQ3**: What feature combinations are most predictive of engagement?
+- **RQ4**: Do deep learning features improve over classical signal-level features on CPU?
 
 ---
 
@@ -135,7 +140,16 @@ We implement multiple segmentation strategies:
 - Scene boundaries (histogram-based cut detection)
 ```
 
-> **Research Note**: We explicitly separate signal-level features from CV features to enable ablation studies measuring the contribution of classical CV techniques.
+#### Deep Learning Features (CPU-friendly)
+
+```
+- CLIP ViT-B/32 visual semantics (scene understanding)
+- Wav2Vec2 audio emotion (speech emotion recognition)
+- Sentence Transformers text embeddings (semantic density)
+- Face emotion detection via MediaPipe (facial expressions)
+```
+
+> **Research Note**: We explicitly separate signal-level features, classical CV features, and deep learning features to enable ablation studies measuring the contribution of each category.
 
 ### 3. Engagement Scoring
 
@@ -168,142 +182,105 @@ Systematic experiments removing modalities to quantify contributions:
 
 | Mode | Text | Audio | Visual | CV | Purpose |
 |------|------|-------|--------|-----|---------|
-| `full_multimodal` | ✓ | ✓ | ✓ | ✓ | Complete system (reference) |
-| `full_no_cv` | ✓ | ✓ | ✓ | ✗ | Measure CV contribution |
-| `text_only` | ✓ | ✗ | ✗ | ✗ | Text baseline |
-| `audio_only` | ✗ | ✓ | ✗ | ✗ | Audio baseline |
-| `visual_only` | ✗ | ✗ | ✓ | ✓ | Visual with CV |
-| `visual_signal_only` | ✗ | ✗ | ✓ | ✗ | Visual signal-level only |
-| `text_audio` | ✓ | ✓ | ✗ | ✗ | No visual features |
+| `full_multimodal` | Y | Y | Y | Y | Complete system (reference) |
+| `full_no_cv` | Y | Y | Y | N | Measure CV contribution |
+| `text_only` | Y | N | N | N | Text baseline |
+| `audio_only` | N | Y | N | N | Audio baseline |
+| `visual_only` | N | N | Y | Y | Visual with CV |
+| `visual_signal_only` | N | N | Y | N | Visual signal-level only |
+| `text_audio` | Y | Y | N | N | No visual features |
 
 **Metrics**:
-- Spearman's ρ (rank correlation with full system)
-- Kendall's τ (concordance)
+- Spearman's rho (rank correlation with full system)
+- Kendall's tau (concordance)
 - Top-K agreement (overlap in top selections)
 
 ---
 
-## Classical Computer Vision Components
+## Deep Learning Features
 
-This section documents the **foundational computer vision techniques** implemented in the visual feature extraction module. These are classical CV algorithms commonly taught in introductory vision courses.
+### Overview
 
-### Why Classical CV?
+The system includes four CPU-friendly deep learning models that provide semantic understanding beyond classical signal-level features. All models use **lazy loading** (loaded on first use, kept in memory) and run entirely on CPU.
 
-While deep learning approaches (CLIP, ViT) offer powerful semantic understanding, classical CV techniques provide:
+| Model | Task | Size | What it captures |
+|-------|------|------|------------------|
+| **CLIP ViT-B/32** | Visual semantics | ~600 MB | Scene understanding, object richness |
+| **Wav2Vec2** | Audio emotion | ~1.3 GB | Speech emotion (angry, happy, sad, etc.) |
+| **all-MiniLM-L6-v2** | Text embeddings | ~90 MB | Semantic density, topic coherence |
+| **MediaPipe** | Face detection | ~5 MB | Face count, presence detection |
 
-1. **Interpretability** — Features have clear geometric/statistical meaning
-2. **Efficiency** — No GPU required, runs on CPU
-3. **Foundation** — Core concepts underlying modern methods
-4. **Ablation** — Measurable contribution to engagement scoring
+### CLIP Visual Semantics
 
-### Implemented Techniques
+Uses OpenAI's CLIP (Contrastive Language-Image Pre-training) to map video frames into a shared text-image embedding space.
 
-#### 1. Contrast (Image Texture Measure)
+**Features extracted:**
+- `clip_embedding_mean` -- Mean CLIP embedding across sampled frames
+- `clip_semantic_variance` -- Embedding variance (visual diversity within segment)
+- `semantic_scene_change_rate` -- Rate of large embedding shifts between frames
+- `object_richness_score` -- Embedding norm as proxy for visual complexity
 
-**Concept**: Standard deviation of grayscale pixel intensities within a frame.
+**Adaptive sampling**: Frames are sampled uniformly across the segment, capped at 15 frames regardless of segment length, to keep inference tractable on CPU.
 
-```
-contrast = std(grayscale_pixels) / 127.5
-```
+### Wav2Vec2 Audio Emotion
 
-**CV Foundation**: Contrast measures intra-frame intensity variation, a fundamental image quality metric. High contrast indicates rich texture and sharp edges; low contrast suggests flat, uniform regions.
+Uses a fine-tuned Wav2Vec2 model for speech emotion recognition.
 
-**Engagement relevance**: Visually complex scenes (high contrast) may be more engaging than flat scenes.
+**Features extracted:**
+- `audio_emotion_label` -- Dominant detected emotion (angry, happy, sad, neutral, etc.)
+- `audio_emotion_confidence` -- Confidence score
+- `audio_emotion_valence` -- Positive/negative emotional valence (-1 to 1)
+- `audio_excitement_score` -- Composite excitement measure from high-arousal emotions
 
-#### 2. Canny Edge Detection
+Audio is capped at 30 seconds per segment to limit compute.
 
-**Concept**: Multi-stage algorithm to detect edges (intensity discontinuities).
+### Sentence Transformer Text Embeddings
 
-```python
-edges = cv2.Canny(gray, low_threshold=50, high_threshold=150)
-edge_density = edge_pixels / total_pixels
-```
+Uses `all-MiniLM-L6-v2` to produce 384-dimensional dense vectors capturing semantic meaning.
 
-**CV Foundation**: 
-1. Gaussian smoothing to reduce noise
-2. Sobel operators for gradient computation (Gx, Gy)
-3. Non-maximum suppression to thin edges
-4. Hysteresis thresholding (strong/weak edge linking)
+**Features extracted:**
+- `text_semantic_density` -- Embedding norm as information density proxy
+- `text_embedding_variance` -- Variance across sentence embeddings (topic diversity)
+- `text_coherence_score` -- Average cosine similarity between consecutive sentences
 
-**Features extracted**:
-- `edge_density` — Ratio of edge pixels (visual complexity)
-- `edge_intensity` — Mean gradient magnitude (edge strength)
+### Face Emotion Detection
 
-**Engagement relevance**: Action sequences and detailed scenes have higher edge density.
+Uses MediaPipe for face detection (with optional FER for emotion classification).
 
-#### 3. Temporal Frame Differencing
-
-**Concept**: Detect motion by computing absolute difference between consecutive frames.
-
-```python
-motion = |frame[t] - frame[t-1]|
-significant_motion = motion > threshold  # Filter noise
-motion_magnitude = sqrt(coverage * strength)
-```
-
-**CV Foundation**: Temporal derivative estimation for motion detection. Simpler than optical flow but effective for measuring activity level.
-
-**Key improvement over raw differencing**:
-- Thresholding (>10 pixels) filters compression artifacts
-- Separate coverage (how much moves) and strength (how fast)
-
-**Limitations** (documented for research honesty):
-- Cannot distinguish object motion from camera motion
-- Sensitive to lighting changes
-- Does not capture motion direction
-
-#### 4. Histogram-Based Scene Detection
-
-**Concept**: Detect shot boundaries by comparing color histograms of consecutive frames.
-
-```python
-hist = cv2.calcHist([frame], [0], None, [64], [0, 256])
-chi_square = cv2.compareHist(hist_prev, hist_curr, cv2.HISTCMP_CHISQR)
-if chi_square > threshold:
-    scene_boundaries.append(timestamp)
-```
-
-**CV Foundation**: 
-- Histograms summarize global color distribution
-- Chi-square distance measures distribution divergence
-- More robust to camera motion than pixel differencing
-
-**Features extracted**:
-- `histogram_diff_mean` — Average chi-square distance
-- `scene_boundaries` — List of detected cut timestamps
-
-### CV Feature Ablation
-
-To measure the contribution of CV features vs. signal-level features:
-
-| Ablation Mode | Visual Features |
-|---------------|-----------------|
-| `full_multimodal` | Signal-level + CV features |
-| `full_no_cv` | Signal-level only (CV zeroed) |
-| `visual_only` | CV features enabled |
-| `visual_signal_only` | Signal-level only |
-
-**Expected hypothesis**: `full_multimodal` > `full_no_cv` because CV features capture structural information (edges, motion patterns, scene structure) that raw pixel statistics miss.
+**Features extracted:**
+- `face_emotion_label` -- Dominant facial emotion
+- `face_emotion_confidence` -- Detection confidence
+- `face_count_mean` -- Average number of faces per frame
+- `face_emotion_diversity` -- Number of distinct emotions detected
 
 ### JSON Output Structure
 
-Visual features are exposed with clear separation:
+Deep features are nested under `deep_features` in the segment output:
 
 ```json
 {
-  "visual_features": {
-    "signal_level": {
-      "motion_intensity": 0.25,
-      "brightness_mean": 0.6,
-      "color_variance": 0.3
+  "deep_features": {
+    "visual_deep_features": {
+      "clip_semantic_variance": 0.0012,
+      "semantic_scene_change_rate": 0.15,
+      "object_richness_score": 0.98
     },
-    "computer_vision": {
-      "contrast": 0.45,
-      "edge_density": 0.15,
-      "edge_intensity": 0.35,
-      "motion_magnitude": 0.28,
-      "histogram_diff_mean": 0.12,
-      "scene_boundaries": [10.5, 25.0]
+    "audio_deep_features": {
+      "audio_emotion_label": "happy",
+      "audio_emotion_confidence": 0.85,
+      "audio_emotion_valence": 0.8,
+      "audio_excitement_score": 0.72
+    },
+    "text_deep_features": {
+      "text_semantic_density": 4.21,
+      "text_embedding_variance": 0.003,
+      "text_coherence_score": 0.89
+    },
+    "face_deep_features": {
+      "face_emotion_label": "happy",
+      "face_emotion_confidence": 0.75,
+      "face_count_mean": 1.5,
+      "face_emotion_diversity": 2
     }
   }
 }
@@ -311,56 +288,145 @@ Visual features are exposed with clear separation:
 
 ---
 
+## Classical Computer Vision Components
+
+This section documents the **foundational computer vision techniques** implemented in the visual feature extraction module.
+
+### Why Classical CV?
+
+While deep learning approaches (CLIP, ViT) offer powerful semantic understanding, classical CV techniques provide:
+
+1. **Interpretability** -- Features have clear geometric/statistical meaning
+2. **Efficiency** -- No GPU required, minimal compute
+3. **Foundation** -- Core concepts underlying modern methods
+4. **Ablation** -- Measurable contribution to engagement scoring
+
+### Implemented Techniques
+
+#### 1. Contrast (Image Texture Measure)
+
+```
+contrast = std(grayscale_pixels) / 127.5
+```
+
+Measures intra-frame intensity variation. High contrast indicates rich texture and sharp edges.
+
+#### 2. Canny Edge Detection
+
+```python
+edges = cv2.Canny(gray, low_threshold=50, high_threshold=150)
+edge_density = edge_pixels / total_pixels
+```
+
+Multi-stage algorithm: Gaussian smoothing, Sobel gradients, non-maximum suppression, hysteresis thresholding.
+
+#### 3. Temporal Frame Differencing
+
+```python
+motion = |frame[t] - frame[t-1]|
+significant_motion = motion > threshold
+motion_magnitude = sqrt(coverage * strength)
+```
+
+Temporal derivative estimation for motion detection. Thresholding (>10 pixels) filters compression artifacts.
+
+#### 4. Histogram-Based Scene Detection
+
+```python
+hist = cv2.calcHist([frame], [0], None, [64], [0, 256])
+chi_square = cv2.compareHist(hist_prev, hist_curr, cv2.HISTCMP_CHISQR)
+```
+
+Detects shot boundaries by comparing color histogram distributions. More robust to camera motion than pixel differencing.
+
+---
+
+## Performance Optimizations
+
+The system is designed to handle videos of **1 hour or more** efficiently on CPU hardware.
+
+### Parallel Deep Feature Extraction
+
+All four deep learning extractors (CLIP, Wav2Vec2, Sentence Transformers, Face Detection) run **concurrently** via `ThreadPoolExecutor`. Since they operate on different data (video frames, audio, text, face crops), they can overlap their I/O and compute.
+
+### Parallel Segment Processing
+
+When multiple segments are detected, basic features (text, audio, visual, CV) are extracted in parallel across CPU cores using `ProcessPoolExecutor`. Deep learning features are applied in the main process afterwards to avoid loading heavy models in every worker.
+
+```
+max_workers = min(os.cpu_count(), 8)
+```
+
+### Adaptive Frame Sampling
+
+For CLIP and face detection, frames are sampled **uniformly across the segment** with adaptive caps:
+- **CLIP**: Max 15 frames per segment (regardless of duration)
+- **Face detection**: Max 10 frames per segment
+- Sampling interval automatically increases for longer segments
+
+### Disk-Based Feature Caching
+
+Feature extraction results are cached to disk. When you re-analyze the same video with the same settings, features are loaded from cache instantly instead of being recomputed.
+
+### Model Lazy Loading
+
+All deep learning models are loaded on first use and kept in memory as singletons. The first run downloads and loads models (one-time cost), but subsequent runs start in seconds.
+
+### FFmpeg Auto-Resolution
+
+FFmpeg is automatically resolved from:
+1. System PATH
+2. `imageio_ffmpeg` bundled binary (installed with moviepy)
+
+No manual FFmpeg installation required if moviepy is installed.
+
+---
+
 ## System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        FRONTEND (HTML/JS)                        │
-│  ┌─────────┐  ┌─────────────┐  ┌───────────┐  ┌──────────────┐ │
-│  │ Upload  │  │ Video Player│  │ Analysis  │  │   Results    │ │
-│  │  Zone   │  │             │  │  Controls │  │    Panel     │ │
-│  └────┬────┘  └──────┬──────┘  └─────┬─────┘  └──────┬───────┘ │
-└───────┼──────────────┼───────────────┼───────────────┼──────────┘
-        │              │               │               │
-        ▼              ▼               ▼               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      REST API (Flask)                            │
-│  /upload  /cut  /api/pipeline/run  /api/pipeline/ablation       │
-└─────────────────────────────────────────────────────────────────┘
-        │
-        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    RESEARCH PIPELINE                             │
-│                                                                  │
-│  ┌──────────┐   ┌─────────────┐   ┌─────────────────────────┐   │
-│  │ Video    │   │ Transcription│   │  Segment Detection     │   │
-│  │ Ingest   │──▶│  (Whisper)  │──▶│  (Pause/Semantic/LLM)  │   │
-│  └──────────┘   └─────────────┘   └───────────┬─────────────┘   │
-│                                               │                  │
-│  ┌──────────────────────────────────────────┐│                  │
-│  │         Feature Extraction               ││                  │
-│  │  ┌──────┐   ┌───────┐   ┌────────┐      │◀┘                  │
-│  │  │ Text │   │ Audio │   │ Visual │      │                    │
-│  │  └──┬───┘   └───┬───┘   └───┬────┘      │                    │
-│  │     └───────────┼───────────┘           │                    │
-│  └─────────────────┼───────────────────────┘                    │
-│                    ▼                                             │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Scoring & Ranking                                          │ │
-│  │  ┌────────────┐  ┌─────────────┐  ┌──────────────────────┐ │ │
-│  │  │ Normalize  │─▶│   Weight    │─▶│   Rank by Score      │ │ │
-│  │  │  Features  │  │   & Score   │  │   (Top-K)            │ │ │
-│  │  └────────────┘  └─────────────┘  └──────────────────────┘ │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│                    │                                             │
-│                    ▼                                             │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Output: AnalysisResult (JSON)                              │ │
-│  │  - Ranked segments with scores                              │ │
-│  │  - Feature vectors per segment                              │ │
-│  │  - Provenance metadata                                      │ │
-│  └────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
++-------------------------------------------------------------------+
+|                        FRONTEND (HTML/JS)                         |
+|  +----------+ +--------------+ +------------+ +----------------+ |
+|  | Upload   | | Video Player | | Analysis   | | Results Panel  | |
+|  | Zone     | |              | | Controls   | | + Deep Features| |
+|  +----+-----+ +------+-------+ +-----+------+ +-------+--------+ |
++-------+---------------+---------------+----------------+----------+
+        |                |               |                |
+        v                v               v                v
++-------------------------------------------------------------------+
+|                      REST API (Flask)                              |
+|  /upload  /cut  /api/pipeline/run  /api/pipeline/ablation         |
++-------------------------------------------------------------------+
+        |
+        v
++-------------------------------------------------------------------+
+|                    RESEARCH PIPELINE                               |
+|                                                                   |
+|  +----------+  +-------------+  +--------------------------+      |
+|  | Video    |  | Transcription|  | Segment Detection       |      |
+|  | Ingest   +->| (Whisper)   +->| (Pause/Semantic/LLM)    |      |
+|  +----------+  +-------------+  +------------+-------------+      |
+|                                              |                    |
+|  +-------------------------------------------v-----------------+ |
+|  |            Feature Extraction (Parallel)                     | |
+|  | +-------+ +-------+ +--------+ +---------------------------+| |
+|  | | Text  | | Audio | | Visual | | Deep Learning             || |
+|  | |       | |       | | + CV   | | CLIP | Wav2Vec2 | MiniLM  || |
+|  | +---+---+ +---+---+ +---+----+ +--+---+----+----+----+----+| |
+|  |     +----------+---------+--------+--------+---------+      | |
+|  +-------------------------------------------+------------------+ |
+|                                              v                    |
+|  +---------------------------------------------------------+     |
+|  |  Scoring & Ranking                                       |     |
+|  |  Normalize -> Weight & Score -> Rank (Top-K)             |     |
+|  +---------------------------------------------------------+     |
+|                    |                                              |
+|                    v                                              |
+|  +---------------------------------------------------------+     |
+|  |  Output: AnalysisResult (JSON, cached to disk)           |     |
+|  +---------------------------------------------------------+     |
++-------------------------------------------------------------------+
 ```
 
 ### Pipeline Stages
@@ -370,7 +436,7 @@ Visual features are exposed with clear separation:
 | `video_ingest` | Video file | VideoMetadata | No |
 | `transcription` | Video file | SubtitleData | Yes |
 | `segment_detection` | Subtitles | Segment candidates | No |
-| `feature_extraction` | Segments + Video | SegmentFeatures | No |
+| `feature_extraction` | Segments + Video | SegmentFeatures | Yes |
 | `scoring` | Features | Scored segments | No |
 | `output` | Scores | AnalysisResult | No |
 
@@ -380,42 +446,33 @@ Visual features are exposed with clear separation:
 
 ### Baseline System (v1.0)
 
-The original system used:
-- Single modality (text only via subtitles)
-- LLM-based segment detection (Gemini API)
-- No formal feature extraction
-- No reproducible scoring function
-
 ```
-Video → Whisper → Subtitles → Gemini → Segments → Cut
+Video -> Whisper -> Subtitles -> Gemini -> Segments -> Cut
 ```
 
-**Limitations**:
-- Non-deterministic (LLM outputs vary)
-- Black-box reasoning (no explainability)
-- Single-modality (ignores audio/visual)
-- No quantitative evaluation possible
+- Single modality (text only), LLM-based, non-deterministic, no evaluation.
 
-### Enhanced System (v2.0)
-
-The research-grade system adds:
-
-| Component | Enhancement |
-|-----------|-------------|
-| **Configuration** | Type-safe dataclasses, environment overrides |
-| **Data Models** | Structured schemas with serialization |
-| **Segmentation** | Multiple algorithmic strategies |
-| **Features** | Real multimodal extraction |
-| **Scoring** | Configurable, explainable functions |
-| **Logging** | Structured JSON for reproducibility |
-| **Ablation** | Systematic modality analysis |
-| **Testing** | Comprehensive test suite |
+### Enhanced System (v2.2)
 
 ```
-Video → Pipeline[6 Stages] → Features[3 Modalities] → Score → Rank
-          ↓                        ↓                     ↓
-       Logging               Ablation Modes         Explanations
+Video -> Pipeline[6 Stages] -> Features[4 Categories] -> Score -> Rank
+           |                         |                      |
+        Caching              Ablation Modes           Explanations
 ```
+
+| Component | v1.0 | v2.2 |
+|-----------|------|------|
+| Modalities | Text only | Text + Audio + Visual + Deep Learning |
+| Segmentation | LLM-based | Algorithmic (pause/semantic/hybrid) |
+| Features | None (black-box) | 30+ explainable features |
+| Vision | None | Classical CV + CLIP ViT-B/32 |
+| Audio | None | Signal-level + Wav2Vec2 emotion |
+| Text | Subtitles only | VADER + Sentence Transformer embeddings |
+| Face Analysis | None | MediaPipe face detection |
+| Processing | Sequential | Parallel (multi-process + multi-thread) |
+| Caching | None | Transcription + feature disk cache |
+| Scoring | LLM opinion | Configurable weighted functions |
+| Evaluation | None | Ablation framework |
 
 ---
 
@@ -425,10 +482,15 @@ Video → Pipeline[6 Stages] → Features[3 Modalities] → Score → Rank
 | Component | Technology |
 |-----------|------------|
 | Web Framework | Flask 2.x |
-| Video Processing | FFmpeg, MoviePy |
+| Video Processing | FFmpeg (auto-resolved), MoviePy |
 | Computer Vision | OpenCV (cv2) |
+| Visual Semantics | CLIP ViT-B/32 (transformers) |
+| Audio Emotion | Wav2Vec2 (transformers) |
+| Text Embeddings | Sentence Transformers (all-MiniLM-L6-v2) |
+| Face Detection | MediaPipe |
 | Speech-to-Text | faster-whisper (CTranslate2) |
 | LLM (optional) | Google Gemini |
+| Parallelism | ProcessPoolExecutor + ThreadPoolExecutor |
 | Data Models | Python dataclasses |
 | Logging | Structured JSON (JSONL) |
 
@@ -454,8 +516,8 @@ Video → Pipeline[6 Stages] → Features[3 Modalities] → Score → Rank
 ### Prerequisites
 
 - Python 3.8+
-- FFmpeg (must be in PATH)
-- 4GB+ RAM (for Whisper model)
+- 8GB+ RAM (for deep learning models)
+- FFmpeg (auto-resolved from moviepy if not on PATH)
 
 ### Quick Start
 
@@ -481,8 +543,19 @@ pip install -r requirements.txt
 echo "GOOGLE_API_KEY=your_key_here" > app/.env
 
 # Run server
-python -m app.app
+python run.py
 ```
+
+### First Run
+
+On the first analysis, deep learning models will be downloaded from HuggingFace Hub and cached locally (~2 GB total). Subsequent runs load from cache in seconds.
+
+| Model | Download Size | First Load | Cached Load |
+|-------|--------------|------------|-------------|
+| CLIP ViT-B/32 | ~600 MB | ~2 min | ~3s |
+| Wav2Vec2 Emotion | ~1.3 GB | ~5 min | ~5s |
+| all-MiniLM-L6-v2 | ~90 MB | ~30s | ~1s |
+| MediaPipe | ~5 MB | instant | instant |
 
 ### Verify Installation
 
@@ -504,8 +577,9 @@ curl http://localhost:5000/health
 2. Upload a video file (MP4, AVI, MOV, MKV)
 3. Select an ablation mode (or use Full Multimodal)
 4. Click **"Run Analysis"**
-5. View ranked segments with scores
-6. Preview or cut selected segments
+5. View ranked segments with scores and deep learning features
+6. Click **"View detailed features"** to see all extracted metrics
+7. Preview or cut selected segments
 
 ### API Usage
 
@@ -525,20 +599,11 @@ response = requests.post(
 result = response.json()
 print(f"Found {result['segment_count']} segments")
 for seg in result['segments']:
-    print(f"  {seg['start_seconds']:.1f}-{seg['end_seconds']:.1f}: {seg['score']['total_score']:.3f}")
-```
-
-### CLI Scripts
-
-```bash
-# Run baseline analysis
-python scripts/run_baseline.py --video uploads/video.mp4
-
-# Run ablation study
-python scripts/run_ablation.py --video uploads/video.mp4 --output-dir results/
-
-# Visualize segments
-python scripts/visualize_segments.py --video uploads/video.mp4
+    score = seg['score']['total_score']
+    deep = seg['features'].get('deep_features', {})
+    emotion = deep.get('audio_deep_features', {}).get('audio_emotion_label', 'N/A')
+    print(f"  {seg['start_seconds']:.1f}-{seg['end_seconds']:.1f}: "
+          f"score={score:.3f}, emotion={emotion}")
 ```
 
 ---
@@ -558,18 +623,26 @@ movie-shorts/
 │   │   │   ├── specification.py
 │   │   │   └── runner.py
 │   │   │
-│   │   ├── features/           # Multimodal feature extraction
+│   │   ├── deep_features/      # Deep learning feature extraction
+│   │   │   ├── __init__.py     # DeepFeatureExtractor (parallel orchestrator)
+│   │   │   ├── clip_features.py       # CLIP ViT-B/32 visual semantics
+│   │   │   ├── audio_emotion.py       # Wav2Vec2 speech emotion
+│   │   │   ├── text_embeddings.py     # Sentence Transformer embeddings
+│   │   │   └── face_emotion.py        # MediaPipe face detection
+│   │   │
+│   │   ├── features/           # Classical feature extraction
 │   │   │   ├── text_features.py
 │   │   │   ├── audio_features.py
-│   │   │   ├── visual_features.py
-│   │   │   └── extractor.py    # Unified interface
+│   │   │   ├── visual_features.py     # Signal-level + OpenCV CV features
+│   │   │   └── extractor.py    # Unified interface + parallel processing
 │   │   │
 │   │   ├── models/             # Data models and schemas
-│   │   │   └── schemas.py      # VideoMetadata, Segment, etc.
+│   │   │   └── schemas.py      # VideoMetadata, Segment, DeepFeatures, etc.
 │   │   │
 │   │   ├── pipeline/           # Processing pipeline
 │   │   │   ├── stages.py       # Individual stage implementations
 │   │   │   ├── pipeline.py     # Pipeline orchestration
+│   │   │   ├── base.py         # Stage base class with caching
 │   │   │   └── context.py      # Shared state
 │   │   │
 │   │   ├── scoring/            # Engagement scoring
@@ -592,21 +665,23 @@ movie-shorts/
 │   │   │   ├── subtitle_service.py
 │   │   │   └── analysis_service.py
 │   │   │
+│   │   ├── utils/              # Shared utilities
+│   │   │   └── video_utils.py  # FFmpeg auto-resolution, video helpers
+│   │   │
 │   │   ├── tests/              # Test suite
 │   │   │   ├── test_pipeline.py
 │   │   │   ├── test_features.py
 │   │   │   ├── test_scoring.py
 │   │   │   └── ...
 │   │   │
+│   │   ├── static/             # Frontend
+│   │   │   └── index.html      # Single-page app (dark theme UI)
+│   │   │
 │   │   ├── config.py           # Configuration system
 │   │   ├── logging_config.py   # Structured logging
 │   │   └── app.py              # Flask application
 │   │
-│   ├── scripts/                # CLI tools
-│   │   ├── run_baseline.py
-│   │   ├── run_ablation.py
-│   │   └── visualize_segments.py
-│   │
+│   ├── run.py                  # Server entry point
 │   └── requirements.txt
 │
 └── README.md
@@ -650,19 +725,22 @@ movie-shorts/
 This project contributes:
 
 1. **Modular Pipeline Architecture**  
-   A composable, stage-based system for video analysis research.
+   A composable, stage-based system for video analysis research with disk caching.
 
 2. **Multimodal Feature Extraction**  
-   Unified extraction of text, audio, and visual features.
+   Unified extraction of text, audio, visual, and deep learning features (30+ features total).
 
-3. **Ablation Framework**  
+3. **CPU-Friendly Deep Learning**  
+   CLIP, Wav2Vec2, Sentence Transformers, and face detection running efficiently on CPU with parallel execution and adaptive sampling.
+
+4. **Ablation Framework**  
    Systematic tools for modality contribution analysis.
 
-4. **Reproducible Experiments**  
-   Structured logging and configuration for reproducibility.
+5. **Reproducible Experiments**  
+   Structured logging, disk caching, and configuration for reproducibility.
 
-5. **Baseline Formalization**  
-   Clear specification of inputs, outputs, and methodology.
+6. **Parallel Processing**  
+   Multi-process segment extraction + multi-thread deep feature extraction for handling long videos.
 
 ---
 
@@ -675,21 +753,20 @@ This project contributes:
 | **No ground truth** | No human-annotated engagement labels | Cannot train supervised models |
 | **Rule-based scoring** | Hand-crafted weights, not learned | May not generalize |
 | **Single language** | Primarily English support | Limited applicability |
-| **No semantic vision** | Classical CV only (no deep learning) | Missing object/scene understanding |
+| **CPU inference** | Deep models on CPU can be slow for very long videos | Processing time scales linearly |
 | **No real-time** | Batch processing only | Not suitable for live streams |
 
 ### Future Work
 
 #### Short-term
-- [ ] Add CLIP/ViT visual embeddings
 - [ ] Implement learned scoring with user feedback
 - [ ] Add language detection and multilingual support
-- [ ] Improve feature caching for large videos
+- [ ] Integrate deep features into engagement scoring weights
 
 #### Medium-term
 - [ ] Create human-annotated engagement dataset
 - [ ] Train regression model for engagement prediction
-- [ ] Add face detection and expression analysis
+- [ ] Add GPU support for faster deep feature extraction
 - [ ] Implement A/B testing framework
 
 #### Long-term
@@ -698,11 +775,15 @@ This project contributes:
 - [ ] Real-time segment streaming
 - [ ] Reinforcement learning from engagement metrics
 
-### Known Issues
+### Completed Milestones
 
-1. Large videos (>1 hour) may timeout on feature extraction
-2. Whisper transcription can be slow on CPU
-3. Visual features require significant disk I/O
+- [x] Add CLIP/ViT visual embeddings
+- [x] Add face detection and expression analysis
+- [x] CPU parallel processing (multi-process + multi-thread)
+- [x] Deep learning feature extraction (4 models)
+- [x] Disk-based feature caching
+- [x] FFmpeg auto-resolution (no manual install needed)
+- [x] Frontend deep learning feature display
 
 ---
 
@@ -734,8 +815,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- **OpenAI** for Whisper speech-to-text
-- **Google** for Gemini multimodal reasoning
+- **OpenAI** for Whisper speech-to-text and CLIP visual model
+- **Google** for Gemini multimodal reasoning and MediaPipe
+- **Hugging Face** for transformers and model hosting
 - **FFmpeg** and **MoviePy** for video processing
 - **OpenCV** for classical computer vision algorithms
 - The open-source community for foundational tools
@@ -747,10 +829,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you use this work in your research, please cite:
 
 ```bibtex
-@software{movie_shorts_2024,
+@software{movie_shorts_2025,
   title = {Multimodal Video Understanding for Short-Form Content Engagement},
   author = {Your Name},
-  year = {2024},
+  year = {2025},
   url = {https://github.com/yourusername/movie-shorts}
 }
 ```
@@ -758,5 +840,5 @@ If you use this work in your research, please cite:
 ---
 
 <div align="center">
-Made with ❤️ for video research
+Made with care for video research
 </div>

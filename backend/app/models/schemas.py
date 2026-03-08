@@ -503,6 +503,121 @@ class VisualFeatures(BaseModel):
         )
 
 
+@dataclass
+class DeepFeatures(BaseModel):
+    """
+    Deep learning features extracted by CPU-friendly models.
+
+    These supplement the signal-level and classical CV features with
+    semantic understanding from pre-trained neural networks.
+
+    Visual (CLIP ViT-B/32):
+        clip_embedding_mean: Mean CLIP embedding across sampled frames
+        clip_semantic_variance: Embedding variance (visual diversity)
+        semantic_scene_change_rate: Rate of large embedding shifts
+        object_richness_score: Embedding norm (visual complexity proxy)
+
+    Audio emotion (Wav2Vec2):
+        audio_emotion_label: Dominant speech emotion
+        audio_emotion_confidence: Confidence of dominant emotion
+        audio_emotion_valence: Positive/negative valence (-1 to 1)
+        audio_excitement_score: Composite excitement measure
+
+    Text embeddings (Sentence Transformers):
+        text_embedding: Dense semantic vector
+        text_semantic_density: Embedding norm (information density)
+        text_embedding_variance: Variance across sentences (topic diversity)
+        text_coherence_score: Cosine similarity between consecutive sentences
+
+    Face emotion (FER / MediaPipe):
+        face_emotion_label: Dominant facial emotion
+        face_emotion_confidence: Confidence of dominant emotion
+        face_count_mean: Average faces per frame
+        face_emotion_diversity: Distinct emotions detected
+    """
+    # CLIP visual features
+    clip_embedding_mean: Optional[List[float]] = None
+    clip_semantic_variance: float = 0.0
+    semantic_scene_change_rate: float = 0.0
+    object_richness_score: float = 0.0
+
+    # Audio emotion features
+    audio_emotion_label: str = "neutral"
+    audio_emotion_confidence: float = 0.0
+    audio_emotion_valence: float = 0.0
+    audio_excitement_score: float = 0.0
+
+    # Text embedding features
+    text_embedding: Optional[List[float]] = None
+    text_semantic_density: float = 0.0
+    text_embedding_variance: float = 0.0
+    text_coherence_score: float = 0.0
+
+    # Face emotion features
+    face_emotion_label: str = "unknown"
+    face_emotion_confidence: float = 0.0
+    face_count_mean: float = 0.0
+    face_emotion_diversity: int = 0
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "visual_deep_features": {
+                "clip_embedding_mean": self.clip_embedding_mean or [],
+                "clip_semantic_variance": self.clip_semantic_variance,
+                "semantic_scene_change_rate": self.semantic_scene_change_rate,
+                "object_richness_score": self.object_richness_score,
+            },
+            "audio_deep_features": {
+                "audio_emotion_label": self.audio_emotion_label,
+                "audio_emotion_confidence": self.audio_emotion_confidence,
+                "audio_emotion_valence": self.audio_emotion_valence,
+                "audio_excitement_score": self.audio_excitement_score,
+            },
+            "text_deep_features": {
+                "text_embedding": self.text_embedding or [],
+                "text_semantic_density": self.text_semantic_density,
+                "text_embedding_variance": self.text_embedding_variance,
+                "text_coherence_score": self.text_coherence_score,
+            },
+            "face_deep_features": {
+                "face_emotion_label": self.face_emotion_label,
+                "face_emotion_confidence": self.face_emotion_confidence,
+                "face_count_mean": self.face_count_mean,
+                "face_emotion_diversity": self.face_emotion_diversity,
+            },
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DeepFeatures":
+        vis = data.get("visual_deep_features", {})
+        aud = data.get("audio_deep_features", {})
+        txt = data.get("text_deep_features", {})
+        face = data.get("face_deep_features", {})
+        return cls(
+            clip_embedding_mean=vis.get("clip_embedding_mean"),
+            clip_semantic_variance=vis.get("clip_semantic_variance", 0.0),
+            semantic_scene_change_rate=vis.get("semantic_scene_change_rate", 0.0),
+            object_richness_score=vis.get("object_richness_score", 0.0),
+            audio_emotion_label=aud.get("audio_emotion_label", "neutral"),
+            audio_emotion_confidence=aud.get("audio_emotion_confidence", 0.0),
+            audio_emotion_valence=aud.get("audio_emotion_valence", 0.0),
+            audio_excitement_score=aud.get("audio_excitement_score", 0.0),
+            text_embedding=txt.get("text_embedding"),
+            text_semantic_density=txt.get("text_semantic_density", 0.0),
+            text_embedding_variance=txt.get("text_embedding_variance", 0.0),
+            text_coherence_score=txt.get("text_coherence_score", 0.0),
+            face_emotion_label=face.get("face_emotion_label", "unknown"),
+            face_emotion_confidence=face.get("face_emotion_confidence", 0.0),
+            face_count_mean=face.get("face_count_mean", 0.0),
+            face_emotion_diversity=face.get("face_emotion_diversity", 0),
+        )
+
+    @classmethod
+    def from_extractor_output(cls, raw: Dict[str, Any]) -> "DeepFeatures":
+        """Create from the dict returned by DeepFeatureExtractor.extract_all()."""
+        return cls.from_dict(raw)
+
+
 @dataclass 
 class SegmentFeatures(BaseModel):
     """
@@ -515,6 +630,7 @@ class SegmentFeatures(BaseModel):
         text_features: Text-based features (or None if disabled)
         audio_features: Audio-based features (or None if disabled)
         visual_features: Visual features (or None if disabled)
+        deep_features: Deep learning features (or None if disabled)
         computed_at: Timestamp when features were computed
         ablation_mode: Which ablation mode was used
     """
@@ -524,6 +640,7 @@ class SegmentFeatures(BaseModel):
     text_features: Optional[TextFeatures] = None
     audio_features: Optional[AudioFeatures] = None
     visual_features: Optional[VisualFeatures] = None
+    deep_features: Optional[DeepFeatures] = None
     computed_at: str = field(default_factory=lambda: datetime.now().isoformat())
     ablation_mode: str = "full_multimodal"
     
@@ -548,6 +665,11 @@ class SegmentFeatures(BaseModel):
         return self.visual_features is not None
     
     @property
+    def has_deep(self) -> bool:
+        """Check if deep learning features are present."""
+        return self.deep_features is not None
+    
+    @property
     def modalities_present(self) -> List[str]:
         """List which modalities have features."""
         modalities = []
@@ -557,6 +679,8 @@ class SegmentFeatures(BaseModel):
             modalities.append("audio")
         if self.has_visual:
             modalities.append("visual")
+        if self.has_deep:
+            modalities.append("deep")
         return modalities
     
     def to_dict(self) -> Dict[str, Any]:
@@ -568,6 +692,7 @@ class SegmentFeatures(BaseModel):
             'text_features': self.text_features.to_dict() if self.text_features else None,
             'audio_features': self.audio_features.to_dict() if self.audio_features else None,
             'visual_features': self.visual_features.to_dict() if self.visual_features else None,
+            'deep_features': self.deep_features.to_dict() if self.deep_features else None,
             'computed_at': self.computed_at,
             'ablation_mode': self.ablation_mode
         }
@@ -582,6 +707,7 @@ class SegmentFeatures(BaseModel):
             text_features=TextFeatures(**data['text_features']) if data.get('text_features') else None,
             audio_features=AudioFeatures(**data['audio_features']) if data.get('audio_features') else None,
             visual_features=VisualFeatures.from_dict(data['visual_features']) if data.get('visual_features') else None,
+            deep_features=DeepFeatures.from_dict(data['deep_features']) if data.get('deep_features') else None,
             computed_at=data.get('computed_at', datetime.now().isoformat()),
             ablation_mode=data.get('ablation_mode', 'full_multimodal')
         )

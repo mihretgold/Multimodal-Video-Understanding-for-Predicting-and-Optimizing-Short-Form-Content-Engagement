@@ -974,7 +974,7 @@
                 <span class="logo-text">Movie Shorts</span>
             </div>
             <p class="tagline">Multimodal Video Understanding for Short-Form Content</p>
-            <span class="version-badge">Research Pipeline v2.1 + CV Features</span>
+            <span class="version-badge">Research Pipeline v2.2 + Deep Learning</span>
         </header>
 
         <!-- Main Content -->
@@ -1696,16 +1696,24 @@
                                                         🔬 CV Features: ${features.visual_features.computer_vision?.contrast || features.visual_features.contrast ? 'Active' : 'Disabled'}
                                                     </div>
                                                 ` : ''}
+                                                ${features.deep_features ? `
+                                                    <div class="dl-indicator" style="margin-top: 0.25rem; font-size: 0.7rem; color: #06b6d4;">
+                                                        🧠 Deep Learning: Active
+                                                        ${features.deep_features.visual_deep_features?.object_richness_score ? ' (CLIP' : ''}${features.deep_features.audio_deep_features?.audio_emotion_label ? ' + Wav2Vec2' : ''}${features.deep_features.text_deep_features?.text_coherence_score ? ' + MiniLM' : ''}${features.deep_features.face_deep_features?.face_count_mean >= 0 ? ' + Face' : ''})
+                                                    </div>
+                                                ` : ''}
                             </div>
                         ` : ''}
+
+                        ${renderDeepFeatureSummary(features.deep_features || null)}
                         
                         ${segment.text_preview ? `
                             <div class="segment-preview">"${truncateText(segment.text_preview)}"</div>
                         ` : ''}
                         
-                        ${features.text_features || features.audio_features || features.visual_features ? `
+                        ${features.text_features || features.audio_features || features.visual_features || features.deep_features ? `
                             <div class="features-toggle" onclick="toggleFeatures('${segmentId}')">
-                                📊 View detailed features ▼
+                                📊 View all detailed features ▼
                             </div>
                             <div class="features-details" id="features-${segmentId}">
                                 ${renderFeatureDetails(features)}
@@ -1843,6 +1851,116 @@
                 }
             }
             
+            if (features.deep_features) {
+                const df = features.deep_features;
+
+                const vis = df.visual_deep_features;
+                if (vis && (vis.clip_semantic_variance || vis.semantic_scene_change_rate || vis.object_richness_score)) {
+                    html += `
+                        <div class="feature-item" style="grid-column: span 2; border-bottom: 2px solid #06b6d4; padding-bottom: 0.5rem; margin-bottom: 0.25rem; margin-top: 0.5rem;">
+                            <span class="feature-name" style="color: #06b6d4; font-weight: 500;">🧠 CLIP Visual Semantics</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Semantic Variance</span>
+                            <span class="feature-value">${formatScore(vis.clip_semantic_variance)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Scene Change Rate</span>
+                            <span class="feature-value">${formatScore(vis.semantic_scene_change_rate)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Object Richness</span>
+                            <span class="feature-value">${formatScore(vis.object_richness_score)}</span>
+                        </div>
+                    `;
+                }
+
+                const aud = df.audio_deep_features;
+                if (aud && aud.audio_emotion_label && aud.audio_emotion_label !== 'neutral') {
+                    html += `
+                        <div class="feature-item" style="grid-column: span 2; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem; margin-bottom: 0.25rem; margin-top: 0.5rem;">
+                            <span class="feature-name" style="color: #f97316; font-weight: 500;">🎙️ Audio Emotion (Wav2Vec2)</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Emotion</span>
+                            <span class="feature-value" style="text-transform: capitalize;">${aud.audio_emotion_label}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Confidence</span>
+                            <span class="feature-value">${formatScore(aud.audio_emotion_confidence)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Valence</span>
+                            <span class="feature-value">${formatScore(aud.audio_emotion_valence)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Excitement</span>
+                            <span class="feature-value">${formatScore(aud.audio_excitement_score)}</span>
+                        </div>
+                    `;
+                } else if (aud) {
+                    html += `
+                        <div class="feature-item" style="grid-column: span 2; border-bottom: 2px solid #f97316; padding-bottom: 0.5rem; margin-bottom: 0.25rem; margin-top: 0.5rem;">
+                            <span class="feature-name" style="color: #f97316; font-weight: 500;">🎙️ Audio Emotion (Wav2Vec2)</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Emotion</span>
+                            <span class="feature-value" style="text-transform: capitalize;">${aud.audio_emotion_label || 'neutral'}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Excitement</span>
+                            <span class="feature-value">${formatScore(aud.audio_excitement_score)}</span>
+                        </div>
+                    `;
+                }
+
+                const txt = df.text_deep_features;
+                if (txt && (txt.text_semantic_density || txt.text_coherence_score)) {
+                    html += `
+                        <div class="feature-item" style="grid-column: span 2; border-bottom: 2px solid #a855f7; padding-bottom: 0.5rem; margin-bottom: 0.25rem; margin-top: 0.5rem;">
+                            <span class="feature-name" style="color: #a855f7; font-weight: 500;">📖 Text Embeddings (MiniLM)</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Semantic Density</span>
+                            <span class="feature-value">${formatScore(txt.text_semantic_density)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Embedding Variance</span>
+                            <span class="feature-value">${formatScore(txt.text_embedding_variance)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Coherence Score</span>
+                            <span class="feature-value">${formatScore(txt.text_coherence_score)}</span>
+                        </div>
+                    `;
+                }
+
+                const face = df.face_deep_features;
+                if (face && (face.face_count_mean > 0 || face.face_emotion_label !== 'unknown')) {
+                    html += `
+                        <div class="feature-item" style="grid-column: span 2; border-bottom: 2px solid #ec4899; padding-bottom: 0.5rem; margin-bottom: 0.25rem; margin-top: 0.5rem;">
+                            <span class="feature-name" style="color: #ec4899; font-weight: 500;">😊 Face Emotion Detection</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Emotion</span>
+                            <span class="feature-value" style="text-transform: capitalize;">${face.face_emotion_label}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Confidence</span>
+                            <span class="feature-value">${formatScore(face.face_emotion_confidence)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Avg Face Count</span>
+                            <span class="feature-value">${formatScore(face.face_count_mean)}</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-name">Emotion Diversity</span>
+                            <span class="feature-value">${face.face_emotion_diversity || 0}</span>
+                        </div>
+                    `;
+                }
+            }
+
             html += '</div>';
             return html;
         }
@@ -1853,6 +1971,35 @@
                 details.classList.toggle('active');
             }
         };
+
+        function renderDeepFeatureSummary(deepFeatures) {
+            if (!deepFeatures) return '';
+            const parts = [];
+
+            const vis = deepFeatures.visual_deep_features;
+            if (vis && vis.object_richness_score) {
+                parts.push(`<span style="color:#06b6d4;">🧠 CLIP richness ${formatScore(vis.object_richness_score)}</span>`);
+            }
+
+            const aud = deepFeatures.audio_deep_features;
+            if (aud && aud.audio_emotion_label) {
+                const emoji = {happy:'😄',angry:'😠',sad:'😢',surprise:'😲',fear:'😨',neutral:'😐',disgust:'🤢'}[aud.audio_emotion_label] || '🎙️';
+                parts.push(`<span style="color:#f97316;">${emoji} ${aud.audio_emotion_label} (${formatScore(aud.audio_emotion_confidence)})</span>`);
+            }
+
+            const txt = deepFeatures.text_deep_features;
+            if (txt && txt.text_coherence_score) {
+                parts.push(`<span style="color:#a855f7;">📖 coherence ${formatScore(txt.text_coherence_score)}</span>`);
+            }
+
+            const face = deepFeatures.face_deep_features;
+            if (face && face.face_count_mean > 0) {
+                parts.push(`<span style="color:#ec4899;">😊 ${formatScore(face.face_count_mean)} faces</span>`);
+            }
+
+            if (parts.length === 0) return '';
+            return `<div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem;font-size:0.75rem;">${parts.join('')}</div>`;
+        }
 
         function displayAblationResults(data) {
             elements.resultsPanel.classList.add('active');
@@ -1870,7 +2017,7 @@
                     Comparing different modality combinations:
                 </div>
                 <div class="ablation-comparison">
-                    ${modes.map(mode => {
+                    ${modes.map((mode, idx) => {
                         const result = results[mode];
                         const modeDisplay = mode.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
                         
@@ -1886,6 +2033,10 @@
                         }
                         
                         const topSeg = result.top_segment;
+                        const features = topSeg ? topSeg.features : null;
+                        const deepFeatures = features ? features.deep_features : null;
+                        const ablationId = 'ablation_' + mode + '_' + idx;
+
                         return `
                             <div class="ablation-result-item">
                                 <div class="ablation-result-header">
@@ -1900,6 +2051,22 @@
                                         Top: ${formatTime(topSeg.start_seconds)} - ${formatTime(topSeg.end_seconds)}
                                         ${topSeg.score ? ` (Score: ${formatScore(topSeg.score.total_score)})` : ''}
                                     </div>
+                                    ${topSeg.score ? `
+                                        <div style="display:flex;gap:0.75rem;margin-top:0.4rem;font-size:0.75rem;color:var(--text-secondary);">
+                                            <span>📝 ${formatScore(topSeg.score.text_score)}</span>
+                                            <span>🔊 ${formatScore(topSeg.score.audio_score)}</span>
+                                            <span>👁️ ${formatScore(topSeg.score.visual_score)}</span>
+                                        </div>
+                                    ` : ''}
+                                    ${renderDeepFeatureSummary(deepFeatures)}
+                                    ${features ? `
+                                        <div class="features-toggle" onclick="toggleFeatures('${ablationId}')" style="margin-top:0.4rem;">
+                                            📊 View detailed features ▼
+                                        </div>
+                                        <div class="features-details" id="features-${ablationId}">
+                                            ${renderFeatureDetails(features)}
+                                        </div>
+                                    ` : ''}
                                 ` : ''}
                             </div>
                         `;

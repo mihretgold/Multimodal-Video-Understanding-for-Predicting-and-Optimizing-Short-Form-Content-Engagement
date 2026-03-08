@@ -2,20 +2,24 @@
 # ==================================
 # Deploy this application on Render with: render blueprint sync
 #
+# ⚠️  CRITICAL: MEMORY REQUIREMENTS
+# ----------------------------------
+# This app REQUIRES at least 2GB RAM (Standard tier or higher)
+# Free tier (512MB) WILL FAIL with "Out of memory" error
+#
 # IMPORTANT NOTES:
 # ----------------
 # 1. This app uses FFmpeg for video processing (installed via apt)
 # 2. Whisper model (~500MB) downloads on first request - allow startup time
 # 3. Ephemeral filesystem: Uploaded videos are LOST on redeploy
-# 4. Recommended: Use "Standard" instance (2GB RAM) for Whisper
-# 5. Set GOOGLE_API_KEY in Render dashboard for Gemini features
+# 4. Set GOOGLE_API_KEY in Render dashboard for Gemini features
 
 services:
   - type: web
     name: movie-shorts
     runtime: python
     region: oregon  # Choose your preferred region
-    plan: standard  # Minimum recommended for Whisper (2GB RAM)
+    plan: standard  # ⚠️ REQUIRED: 2GB RAM minimum (Free tier will crash)
     
     # Build configuration
     buildCommand: |

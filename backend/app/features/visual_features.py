@@ -35,6 +35,7 @@ from pathlib import Path
 
 from ..models import VisualFeatures
 from ..config import get_config
+from ..utils.video_utils import get_ffmpeg_path
 
 logger = logging.getLogger(__name__)
 
@@ -157,7 +158,7 @@ class VisualFeatureExtractor:
                 frame_pattern = os.path.join(temp_dir, 'frame_%03d.ppm')
                 
                 cmd = [
-                    'ffmpeg',
+                    get_ffmpeg_path(),
                     '-y',
                     '-ss', str(start_seconds),
                     '-t', str(duration),

@@ -163,16 +163,29 @@ class PipelineContext:
         - Video file hash (first 1MB)
         - Stage name
         - Relevant configuration parameters
+        
+        Transcription is ablation-independent (same audio regardless of mode),
+        so it uses a shared cache key. Feature extraction also includes a hash
+        of current segment IDs so the cache auto-invalidates when segments change.
         """
-        # Read first 1MB of video for hash
         with open(self.video_path, 'rb') as f:
             video_sample = f.read(1024 * 1024)
         video_hash = hashlib.md5(video_sample).hexdigest()[:12]
         
-        # Include relevant config in cache key
-        config_str = f"{self.config.whisper.model_size}_{self.config.ablation.mode_name}"
+        ablation_independent = {"transcription"}
+        if stage_name in ablation_independent:
+            config_str = f"{self.config.whisper.model_size}"
+        else:
+            config_str = f"{self.config.whisper.model_size}_{self.config.ablation.mode_name}"
         
-        return f"{stage_name}_{video_hash}_{config_str}"
+        parts = [stage_name, video_hash, config_str]
+        
+        if stage_name == "feature_extraction" and self.candidate_segments:
+            seg_ids = sorted(s.segment_id for s in self.candidate_segments)
+            seg_hash = hashlib.md5("_".join(seg_ids).encode()).hexdigest()[:8]
+            parts.append(seg_hash)
+        
+        return "_".join(parts)
     
     def get_cache_path(self, stage_name: str) -> Path:
         """Get the file path for caching a stage's output."""

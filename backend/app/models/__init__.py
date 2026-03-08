@@ -28,6 +28,7 @@ from .schemas import (
     TextFeatures,
     AudioFeatures,
     VisualFeatures,
+    DeepFeatures,
     SegmentFeatures,
     
     # Scoring
@@ -66,6 +67,7 @@ __all__ = [
     'TextFeatures',
     'AudioFeatures',
     'VisualFeatures',
+    'DeepFeatures',
     'SegmentFeatures',
     
     # Scoring
